@@ -105,6 +105,13 @@ class UserController extends Controller
     {
         //$usuario = \App\User::find($id_usuario);
         $usuario = DB::table('users as T1')
+            ->join('tw_empleados as T2', 'T1.id_empleado', '=', 'T2.id_empleado')
+            ->join('tc_tipos_empleados as T3', 'T2.id_tipo_empleado', '=', 'T3.id_tipo_empleado')
+            ->join('tc_descripciones_tipos_empleados as T8', 'T3.id_tipo_empleado', '=', 'T8.id_tipo_empleado')
+            ->join('tc_profesiones as T4', 'T2.id_profesion', '=', 'T4.id_profesion')
+            ->join('tc_grados_estudios as T5', 'T2.id_grado_estudios', '=', 'T5.id_grado_estudios')
+            ->join('tw_sucursales as T6', 'T2.id_sucursal', '=', 'T6.id_sucursal')
+            ->join('tc_estados_disponibilidad as T7', 'T2.id_estado_disponibilidad', '=', 'T7.id_estado_disponibilidad')
             ->select(
                 'T1.*',
                 'T1.b_usuario_web',
@@ -134,13 +141,6 @@ class UserController extends Controller
                 'T6.s_sucursal',
                 'T7.s_estado_disponibilidad'
             )
-            ->join('tw_empleados as T2', 'T1.id_empleado', '=', 'T2.id_empleado')
-            ->join('tc_tipos_empleados as T3', 'T2.id_tipo_empleado', '=', 'T3.id_tipo_empleado')
-            ->join('tc_descripciones_tipos_empleados as T8', 'T3.id_tipo_empleado', '=', 'T8.id_tipo_empleado')
-            ->join('tc_profesiones as T4', 'T2.id_profesion', '=', 'T4.id_profesion')
-            ->join('tc_grados_estudios as T5', 'T2.id_grado_estudios', '=', 'T5.id_grado_estudios')
-            ->join('tw_sucursales as T6', 'T2.id_sucursal', '=', 'T6.id_sucursal')
-            ->join('tc_estados_disponibilidad as T7', 'T2.id_estado_disponibilidad', '=', 'T7.id_estado_disponibilidad')
             ->where('T1.id', $id_usuario)
             ->get();
 
@@ -163,7 +163,7 @@ class UserController extends Controller
         $user = User::where('name', $requets->name)
             ->where('b_activo', '=', 1)
             ->first();
-        
+
         if (!$user) {
             $result = [
                 'status' => 'error',
