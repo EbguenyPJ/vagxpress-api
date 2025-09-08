@@ -12,6 +12,48 @@ class CatalogoController extends Controller
     /**
      * Obtener todos los catálogos activos
      */
+    public function getModulosUsuario($id_usuario)
+    {
+        try {
+            $data = DB::table('tr_modulos_usuarios AS T1')
+                ->leftJoin('tc_modulos AS T2', 'T1.id_modulo', '=', 'T2.id_modulo')
+                ->leftJoin('tc_categorias_modulos AS T3', 'T2.id_categoria_modulo', '=', 'T3.id_categoria_modulo')
+                ->select(
+                    'T1.id_modulo',
+                    'T1.id_usuario',
+                    'T2.id_categoria_modulo',
+                    'T3.s_categoria_modulo',
+                    'T2.s_modulo',
+                    'T2.s_ruta',
+                    'T2.s_icono',
+                )
+                ->where('T1.id_usuario', $id_usuario)
+                ->where('T1.b_activo', 1)
+                ->get();
+
+            if ($data->isEmpty()) {
+                return [
+                    'status' => 'error',
+                    'code' => 400,
+                    'message' => 'No hay modulos asignados a este usuario',
+                ];
+            }
+
+            return [
+                'status' => 'success',
+                'code' => 200,
+                'message' => 'Modulos del usuario obtenidos correctamente',
+                'data' => $data
+            ];
+        } catch (\Exception $e) {
+            return [
+                'status' => 'error',
+                'code' => 500,
+                'message' => 'Error al obtener modulos del usuario',
+                'error' => $e->getMessage()
+            ];
+        }
+    }
     public function getAll()
     {
         try {
