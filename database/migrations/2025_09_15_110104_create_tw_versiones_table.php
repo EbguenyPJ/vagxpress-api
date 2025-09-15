@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('s_descripcion_version')->nullable();
             $table->date('d_fecha_actualizacion_version')->nullable();
             $table->tinyInteger('b_activo')->default(1);
+            $table->timestamps();
         });
     }
 

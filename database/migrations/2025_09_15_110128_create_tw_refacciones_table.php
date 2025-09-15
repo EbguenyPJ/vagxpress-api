@@ -42,7 +42,7 @@ return new class extends Migration
             // Relaciones (FKs)
             $table->unsignedInteger('id_marca_refaccion')->nullable();
             $table->unsignedInteger('id_unidad_medida')->nullable();
-            $table->unsignedInteger('id_provedor')->nullable();
+            $table->unsignedInteger('id_proveedor')->nullable();
             $table->unsignedInteger('id_clase_refaccion')->nullable();          // Niveles Calidad
             $table->unsignedInteger('id_categoria_refaccion')->nullable();      //  Sistemas de ...
             $table->unsignedInteger('id_subcategoria_refaccion')->nullable();       //  Tipos de ...

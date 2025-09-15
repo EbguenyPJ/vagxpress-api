@@ -22,7 +22,7 @@ class RefaccionController extends Controller
                 'n_stock_actual' => 'nullable|numeric|min:0',
                 'id_marca_refaccion' => 'nullable|integer|exists:tc_marcas_refacciones,id_marca_refaccion',
                 'id_unidad_medida' => 'nullable|integer|exists:tc_unidades_medida,id_unidad_medida',
-                'id_provedor' => 'nullable|integer|exists:tw_provedores,id_provedor',
+                'id_proveedor' => 'nullable|integer|exists:tw_proveedores,id_proveedor',
                 'id_clase_refaccion' => 'nullable|integer|exists:tc_clases_refacciones,id_clase_refaccion',
                 'id_categoria_refaccion' => 'nullable|integer|exists:tc_categorias_refacciones,id_categoria_refaccion',
                 'id_subcategoria_refaccion' => 'nullable|integer|exists:tc_subcategorias_refacciones,id_subcategoria_refaccion',
@@ -52,7 +52,7 @@ class RefaccionController extends Controller
             $refaccion->n_stock_actual              = $request->n_stock_actual ?? 0;                                     //TODO Ajustar para multiplicar por el porcentaje de la tabla de configuraciones en ves de usar 1.4
             $refaccion->id_marca_refaccion          = $request->id_marca_refaccion;
             $refaccion->id_unidad_medida            = $request->id_unidad_medida ?? null;
-            $refaccion->id_provedor                 = $request->id_provedor ?? null;
+            $refaccion->id_proveedor                = $request->id_proveedor ?? null;
             $refaccion->id_clase_refaccion          = $request->id_clase_refaccion ?? null;
             $refaccion->id_categoria_refaccion      = $request->id_categoria_refaccion;
             $refaccion->id_subcategoria_refaccion   = $request->id_subcategoria_refaccion;
@@ -91,7 +91,7 @@ class RefaccionController extends Controller
                 $data = DB::table('tw_refacciones AS T1')
                     ->leftJoin('tc_marcas_refacciones AS T2', 'T1.id_marca_refaccion', '=', 'T2.id_marca_refaccion')
                     ->leftJoin('tc_unidades_medida AS T3', 'T1.id_unidad_medida', '=', 'T3.id_unidad_medida')
-                    ->leftJoin('tw_provedores AS T4', 'T1.id_provedor', '=', 'T4.id_provedor')
+                    ->leftJoin('tw_proveedores AS T4', 'T1.id_proveedor', '=', 'T4.id_proveedor')
                     ->leftJoin('tc_categorias_refacciones AS T5', 'T1.id_categoria_refaccion', '=', 'T5.id_categoria_refaccion')
                     ->leftJoin('tc_subcategorias_refacciones AS T6', 'T1.id_subcategoria_refaccion', '=', 'T6.id_subcategoria_refaccion')
                     ->leftJoin('tc_posiciones_vehiculo AS T7', 'T1.id_posicion_vehiculo', '=', 'T7.id_posicion_vehiculo')
@@ -106,7 +106,7 @@ class RefaccionController extends Controller
 //                        'T1.n_precio_compra',
                         'T1.n_precio_venta',
                         'T2.s_marca_refaccion',
-//                        'T4.s_provedor',
+//                        'T4.s_proveedor',
                         'T5.s_categoria_refaccion',
                         'T6.s_subcategoria_refaccion',
                         'T1.s_imagen_refaccion',
@@ -160,7 +160,7 @@ class RefaccionController extends Controller
             $data = DB::table('tw_refacciones AS T1')
                 ->leftJoin('tc_marcas_refacciones AS T2', 'T1.id_marca_refaccion', '=', 'T2.id_marca_refaccion')
                 ->leftJoin('tc_unidades_medida AS T3', 'T1.id_unidad_medida', '=', 'T3.id_unidad_medida')
-                ->leftJoin('tw_provedores AS T4', 'T1.id_provedor', '=', 'T4.id_provedor')
+                ->leftJoin('tw_proveedores AS T4', 'T1.id_proveedor', '=', 'T4.id_proveedor')
                 ->leftJoin('tc_categorias_refacciones AS T5', 'T1.id_categoria_refaccion', '=', 'T5.id_categoria_refaccion')
                 ->leftJoin('tc_subcategorias_refacciones AS T6', 'T1.id_subcategoria_refaccion', '=', 'T6.id_subcategoria_refaccion')
                 ->leftJoin('tc_posiciones_vehiculo AS T7', 'T1.id_posicion_vehiculo', '=', 'T7.id_posicion_vehiculo')
@@ -184,8 +184,8 @@ class RefaccionController extends Controller
                     'T2.s_marca_refaccion',
                     'T1.id_unidad_medida',
                     'T3.s_unidad_medida',
-                    'T1.id_provedor',
-                    'T4.s_provedor',
+                    'T1.id_proveedor',
+                    'T4.s_proveedor',
                     'T1.id_categoria_refaccion',
                     'T5.s_categoria_refaccion',
                     'T1.id_subcategoria_refaccion',
@@ -243,7 +243,7 @@ class RefaccionController extends Controller
                 'n_stock_actual' => 'nullable|numeric|min:0',
                 'id_marca_refaccion' => 'nullable|integer|exists:tc_marcas_refacciones,id_marca_refaccion',
                 'id_unidad_medida' => 'nullable|integer|exists:tc_unidades_medida,id_unidad_medida',
-                'id_provedor' => 'nullable|integer|exists:tw_provedores,id_provedor',
+                'id_proveedor' => 'nullable|integer|exists:tw_proveedores,id_proveedor',
                 'id_clase_refaccion' => 'nullable|integer|exists:tc_clases_refacciones,id_clase_refaccion',
                 'id_categoria_refaccion' => 'required|integer|exists:tc_categorias_refacciones,id_categoria_refaccion',
                 'id_subcategoria_refaccion' => 'required|integer|exists:tc_subcategorias_refacciones,id_subcategoria_refaccion',
@@ -278,7 +278,7 @@ class RefaccionController extends Controller
             $refaccion->n_stock_actual              = $request->n_stock_actual ?? $refaccion->n_stock_actual;
             $refaccion->id_marca_refaccion          = $request->id_marca_refaccion ?? $refaccion->id_marca_refaccion;
             $refaccion->id_unidad_medida            = $request->id_unidad_medida ?? $refaccion->id_unidad_medida;
-            $refaccion->id_provedor                 = $request->id_provedor ?? $refaccion->id_provedor;
+            $refaccion->id_proveedor                 = $request->id_proveedor ?? $refaccion->id_proveedor;
             $refaccion->id_clase_refaccion          = $request->id_clase_refaccion ?? $refaccion->id_clase_refaccion;
             $refaccion->id_categoria_refaccion      = $request->id_categoria_refaccion ?? $refaccion->id_categoria_refaccion;
             $refaccion->id_subcategoria_refaccion   = $request->id_subcategoria_refaccion ?? $refaccion->id_subcategoria_refaccion;
@@ -362,7 +362,7 @@ class RefaccionController extends Controller
                 $refaccion->n_precio_venta       = 0;
                 $refaccion->n_stock_actual       = 0;
                 $refaccion->id_unidad_medida     = null;
-                $refaccion->id_provedor          = null;
+                $refaccion->id_proveedor          = null;
                 $refaccion->id_clase_refaccion   = null;
                 $refaccion->id_posicion_vehiculo = null;
                 $refaccion->id_ubicacion_almacen = null;

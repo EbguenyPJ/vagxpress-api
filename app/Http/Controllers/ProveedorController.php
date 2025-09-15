@@ -5,12 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class ProvedorController extends Controller
+class ProveedorController extends Controller
 {
-    public function getProvedores()
+    public function getProveedores()
     {
         try {
-            $data = DB::table('tw_provedores')
+            $data = DB::table('tw_proveedores')
                 ->select(
                     '*'
                 )

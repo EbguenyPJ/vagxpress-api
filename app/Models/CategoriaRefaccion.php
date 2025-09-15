@@ -13,6 +13,7 @@ class CategoriaRefaccion extends Model
     protected $primaryKey = 'id_categoria_refaccion';
     protected $fillable = [
         's_categoria_refaccion',
+        's_img_categoria_refaccion',
         'b_activo',
     ];
 }
