@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tc_lotes', function (Blueprint $table) {
-            $table->id('id_lote');
-            $table->string('s_lote')->unique()->nullable();
+        Schema::create('tc_marcas_refacciones', function (Blueprint $table) {
+            $table->id('id_marca_refaccion');
+            $table->string('s_marca_refaccion')->nullable();
+            $table->string('s_img_marca_refaccion')->nullable();
             $table->tinyInteger('b_activo')->default(1);
             $table->timestamps();
         });
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tc_lotes');
+        Schema::dropIfExists('tc_marcas_refacciones');
     }
 };

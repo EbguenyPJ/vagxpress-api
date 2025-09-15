@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tc_posiciones_vehiculo', function (Blueprint $table) {
-            $table->id('id_posicion_vehiculo');
-            $table->string('s_posicion_vehiculo')->unique()->nullable();
+        Schema::create('tc_modulos', function (Blueprint $table) {
+            $table->id('id_modulo');
+            $table->unsignedInteger('id_categoria_modulo')->nullable();
+            $table->string('s_modulo')->nullable();
+            $table->string('s_ruta')->nullable();
+            $table->string('s_icono')->nullable();
             $table->tinyInteger('b_activo')->default(1);
             $table->timestamps();
         });
@@ -24,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tc_posiciones_vehiculo');
+        Schema::dropIfExists('tc_modulos');
     }
 };

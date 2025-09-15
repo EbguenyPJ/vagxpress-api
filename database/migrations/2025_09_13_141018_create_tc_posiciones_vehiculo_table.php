@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tc_categorias_refacciones', function (Blueprint $table) {
-            $table->id('id_categoria_refaccion');
-            $table->string('s_categoria_refaccion')->nullable()->unique();
+        Schema::create('tc_posiciones_vehiculo', function (Blueprint $table) {
+            $table->id('id_posicion_vehiculo');
+            $table->string('s_posicion_vehiculo')->nullable();
             $table->tinyInteger('b_activo')->default(1);
             $table->timestamps();
         });
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tc_categorias_refacciones');
+        Schema::dropIfExists('tc_posiciones_vehiculo');
     }
 };

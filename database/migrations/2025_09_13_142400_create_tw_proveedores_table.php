@@ -11,9 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tc_configuraciones', function (Blueprint $table) {
-            $table->id('id_configuracion');
-            $table->string('s_configuracion')->unique()->nullable();
+        Schema::create('tw_proveedores', function (Blueprint $table) {
+            $table->id('id_proveedor');
+            $table->string('s_proveedor')->nullable();
+            $table->string('s_nombre_contacto')->nullable();
+            $table->string('s_telefono')->nullable();
+            $table->string('s_rfc')->nullable();
+            $table->string('s_img_proveedor')->nullable();
             $table->tinyInteger('b_activo')->default(1);
             $table->timestamps();
         });
@@ -24,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tc_configuraciones');
+        Schema::dropIfExists('tw_proveedores');
     }
 };

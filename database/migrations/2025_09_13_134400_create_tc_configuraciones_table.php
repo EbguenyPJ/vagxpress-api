@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tc_unidades_medida', function (Blueprint $table) {
-            $table->id('id_unidad_medida');
-            $table->string('s_unidad_medida')->unique()->nullable();
-            $table->tinyInteger('b_activo')->default(1)->nullable();
+        Schema::create('tc_configuraciones', function (Blueprint $table) {
+            $table->id('id_configuracion');
+            $table->string('s_configuracion')->nullable();
+            $table->tinyInteger('b_activo')->default(1);
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tc_unidades_medida');
+        Schema::dropIfExists('tc_configuraciones');
     }
 };
