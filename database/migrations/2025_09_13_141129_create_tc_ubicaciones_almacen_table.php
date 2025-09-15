@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tc_tipos_usuarios', function (Blueprint $table) {
-            $table->id('id_tipo_usuario');
-            $table->string('s_tipo_usuario')->unique()->nullable(false);
+        Schema::create('tc_ubicaciones_almacen', function (Blueprint $table) {
+            $table->id('id_ubicacion_almacen');
+            $table->string('s_ubicacion_almacen')->nullable();
             $table->tinyInteger('b_activo')->default(1);
             $table->timestamps();
         });
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tc_tipos_usuarios');
+        Schema::dropIfExists('tc_ubicaciones_almacen');
     }
 };

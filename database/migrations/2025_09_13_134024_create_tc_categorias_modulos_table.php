@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tc_estatus_refacciones', function (Blueprint $table) {
-            $table->id('id_estatus_refaccion');
-            $table->string('s_estatus_refaccion')->unique()->nullable();
+        Schema::create('tc_categorias_modulos', function (Blueprint $table) {
+            $table->id('id_categoria_modulo');
+            $table->string('s_categoria_modulo')->nullable();
             $table->tinyInteger('b_activo')->default(1);
             $table->timestamps();
         });
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tc_estatus_refacciones');
+        Schema::dropIfExists('tc_categorias_modulos');
     }
 };

@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('tc_subcategorias_refacciones', function (Blueprint $table) {
             $table->id('id_subcategoria_refaccion');
-            $table->integer('id_categoria_refaccion');
-            $table->string('s_subcategoria_refaccion')->nullable()->unique();
+            $table->unsignedInteger('id_categoria_refaccion')->nullable();
+            $table->string('s_subcategoria_refaccion')->nullable();
+            $table->string('s_img_subcategoria_refaccion')->nullable();
             $table->tinyInteger('b_activo')->default(1);
             $table->timestamps();
         });

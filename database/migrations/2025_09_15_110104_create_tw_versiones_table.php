@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tc_clases_refacciones', function (Blueprint $table) {
-            $table->id('id_clase_refaccion');
-            $table->string('s_clase_refaccion')->nullable()->unique();
+        Schema::create('tw_versiones', function (Blueprint $table) {
+            $table->id('id_version');
+            $table->unsignedInteger('id_usuario')->nullable();
+            $table->string('s_nombre_version')->nullable();
+            $table->string('s_descripcion_version')->nullable();
+            $table->date('d_fecha_actualizacion_version')->nullable();
             $table->tinyInteger('b_activo')->default(1);
             $table->timestamps();
         });
@@ -24,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tc_clases_refacciones');
+        Schema::dropIfExists('tw_versiones');
     }
 };

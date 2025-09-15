@@ -13,6 +13,7 @@ class MarcaRefaccion extends Model
     protected $primaryKey = "id_marca_refaccion";
     protected $fillable = [
         's_marca_refaccion',
+        's_img_marca_refaccion',
         'b_activo',
     ];
 }

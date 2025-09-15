@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tr_modulos_usuarios', function (Blueprint $table) {
-            $table->id('id_modulo_usuario');
-            $table->unsignedInteger('id_modulo')->nullable(false);
-            $table->unsignedInteger('id_usuario')->nullable(false);
+        Schema::create('tc_clases_refacciones', function (Blueprint $table) {
+            $table->id('id_clase_refaccion');
+            $table->string('s_clase_refaccion')->nullable();
+            $table->string('s_color_clase_refaccion')->nullable();
             $table->tinyInteger('b_activo')->default(1);
             $table->timestamps();
         });
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tr_modulos_usuarios');
+        Schema::dropIfExists('tc_clases_refacciones');
     }
 };

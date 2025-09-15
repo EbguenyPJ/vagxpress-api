@@ -107,11 +107,11 @@ class UserController extends Controller
         $usuario = DB::table('users as T1')
             ->join('tw_empleados as T2', 'T1.id_empleado', '=', 'T2.id_empleado')
             ->join('tc_tipos_empleados as T3', 'T2.id_tipo_empleado', '=', 'T3.id_tipo_empleado')
-            ->join('tc_descripciones_tipos_empleados as T8', 'T3.id_tipo_empleado', '=', 'T8.id_tipo_empleado')
-            ->join('tc_profesiones as T4', 'T2.id_profesion', '=', 'T4.id_profesion')
-            ->join('tc_grados_estudios as T5', 'T2.id_grado_estudios', '=', 'T5.id_grado_estudios')
-            ->join('tw_sucursales as T6', 'T2.id_sucursal', '=', 'T6.id_sucursal')
-            ->join('tc_estados_disponibilidad as T7', 'T2.id_estado_disponibilidad', '=', 'T7.id_estado_disponibilidad')
+//            ->join('tc_descripciones_tipos_empleados as T8', 'T3.id_tipo_empleado', '=', 'T8.id_tipo_empleado')
+//            ->join('tc_profesiones as T4', 'T2.id_profesion', '=', 'T4.id_profesion')
+//            ->join('tc_grados_estudios as T5', 'T2.id_grado_estudios', '=', 'T5.id_grado_estudios')
+//            ->join('tw_sucursales as T6', 'T2.id_sucursal', '=', 'T6.id_sucursal')
+//            ->join('tc_estados_disponibilidad as T7', 'T2.id_estado_disponibilidad', '=', 'T7.id_estado_disponibilidad')
             ->select(
                 'T1.*',
                 'T1.b_usuario_web',
@@ -122,24 +122,24 @@ class UserController extends Controller
                 'T2.s_foto_empleado',
                 'T2.s_rfc',
                 'T2.s_curp',
-                'T2.n_telefono',
+                'T2.s_telefono',
                 'T2.s_correo',
                 'T2.s_direccion',
-                'T2.s_licencia',
-                'T2.s_seguro',
+                'T2.s_num_licencia',
+                'T2.s_num_seguro',
                 'T2.s_qr_empleado',
                 'T2.d_fecha_nacimiento',
                 'T2.d_fecha_ingreso',
                 'T2.s_comodin',
                 'T2.id_sexo',
                 'T2.s_contacto_emergencia',
-                'T2.n_telefono_contacto_emergencia',
+                'T2.s_telefono_contacto_emergencia',
                 'T3.s_tipo_empleado',
-                'T8.s_descripcion as s_descripcion_tipo_empleado',
-                'T4.s_profesion',
-                'T5.s_grado_estudios',
-                'T6.s_sucursal',
-                'T7.s_estado_disponibilidad'
+//                'T8.s_descripcion as s_descripcion_tipo_empleado',
+//                'T4.s_profesion',
+//                'T5.s_grado_estudios',
+//                'T6.s_sucursal',
+//                'T7.s_estado_disponibilidad'
             )
             ->where('T1.id', $id_usuario)
             ->get();

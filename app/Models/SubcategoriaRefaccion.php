@@ -14,6 +14,7 @@ class SubcategoriaRefaccion extends Model
     protected $fillable = [
         'id_categoria_refaccion',
         's_subcategoria_refaccion',
+        's_img_subcategoria_refaccion',
         'b_activo',
     ];
 }

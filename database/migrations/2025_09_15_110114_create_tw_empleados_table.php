@@ -39,6 +39,7 @@ return new class extends Migration
             $table->tinyInteger('b_es_usuario')->default(0);
             $table->tinyInteger('b_activo')->default(1);
             $table->string('s_comodin')->nullable();
+            $table->timestamps();
         });
     }
 

@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tw_provedores', function (Blueprint $table) {
-            $table->id('id_provedor');
-            $table->string('s_provedor')->unique()->nullable();
-            $table->string('s_nombre_contacto')->nullable();
-            $table->string('s_telefono')->nullable();
-            $table->string('s_rfc')->nullable();
+        Schema::create('tr_modulos_usuarios', function (Blueprint $table) {
+            $table->id('id_modulo_usuario');
+            $table->unsignedInteger('id_modulo')->nullable();
+            $table->unsignedInteger('id_usuario')->nullable();
             $table->tinyInteger('b_activo')->default(1);
             $table->timestamps();
         });
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tw_provedores');
+        Schema::dropIfExists('tr_modulos_usuarios');
     }
 };
