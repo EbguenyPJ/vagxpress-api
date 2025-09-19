@@ -19,6 +19,7 @@ class Refaccion extends Model
         's_numero_parte',
         's_codigo_interno',
         's_codigo_alterno',
+        's_sku',
         's_codigo_aces',
         's_imagen_refaccion',
         's_codigo_qr',
@@ -45,8 +46,9 @@ class Refaccion extends Model
         'id_subcategoria_refaccion',       //  Tipos de ...
         'id_posicion_vehiculo',
         'id_ubicacion_almacen',
-        'id_lote',
         'id_codigo_sat',
+        'id_estatus_refaccion',
+        'id_equivalencia',
         'id_codigo_aces',
 
             // Flags
