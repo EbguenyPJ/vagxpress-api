@@ -13,7 +13,6 @@ class RefaccionController extends Controller
 {
     public function crearRefaccion(Request $request)
     {
-        // 1. Validación de datos
         try {
             $request->validate([
                 's_nombre_refaccion' => 'required|string|max:255|unique:tw_refacciones,s_nombre_refaccion',
@@ -43,7 +42,6 @@ class RefaccionController extends Controller
             ], 422);
         }
 
-        // 2. Lógica en base de datos dentro de transacción
         try {
             \DB::beginTransaction();
 
@@ -74,7 +72,6 @@ class RefaccionController extends Controller
 
 
             if (!empty($equivalentes)) {
-                // Validamos que existan y estén activas
                 $activos = \DB::table('tw_refacciones')
                     ->whereIn('id_refaccion', $equivalentes)
                     ->where('b_activo', 1)
@@ -85,7 +82,6 @@ class RefaccionController extends Controller
                     throw new \Exception("Alguna de las refacciones equivalentes no existe o está inactiva.");
                 }
 
-                // Verificamos si ya tienen grupo
                 $grupos = \DB::table('tr_refacciones_equivalencias')
                     ->select('id_equivalencia')
                     ->whereIn('id_refaccion', $equivalentes)
@@ -99,7 +95,6 @@ class RefaccionController extends Controller
                 }
 
                 if (count($grupos) === 1) {
-                    // Ya hay grupo → insertamos directamente la nueva refacción
                     $idGrupo = $grupos[0];
 
                     $refEquivalencia = new RefaccionEquivalencia();
@@ -108,7 +103,6 @@ class RefaccionController extends Controller
                     $refEquivalencia->id_usuario_crea = $request->id_usuario_crea ?? null;
                     $refEquivalencia->save();
                 } else {
-                    // No hay grupo → creamos uno nuevo
                     $equivalencia = new Equivalencia();
                     $equivalencia->s_nombre_equivalencia     = 'Equivalencia ' . $equivalencia->id_equivalencia . now()->format('YmdHis');
                     $equivalencia->s_descripcion_equivalencia = 'Grupo creado automáticamente';
@@ -117,7 +111,7 @@ class RefaccionController extends Controller
 
                     $idGrupo = $equivalencia->id_equivalencia;
 
-                    // Insertamos todas las equivalencias + la nueva
+
                     foreach (array_merge($equivalentes, [$idRefaccion]) as $idEq) {
                         $refEquivalencia = new RefaccionEquivalencia();
                         $refEquivalencia->id_refaccion    = $idEq;
@@ -127,8 +121,6 @@ class RefaccionController extends Controller
                     }
                 }
             }
-
-
 
 
             \DB::commit();
@@ -153,8 +145,6 @@ class RefaccionController extends Controller
 
     public function mostrarRefacciones()
     {
-
-        // 2. Lógica en base de datos dentro de transacción
         try {
                 $data = DB::table('tw_refacciones AS T1')
                     ->leftJoin('tc_marcas_refacciones AS T2', 'T1.id_marca_refaccion', '=', 'T2.id_marca_refaccion')
@@ -169,25 +159,20 @@ class RefaccionController extends Controller
                     ->select(
                         'T1.id_refaccion',
                         'T1.s_nombre_refaccion',
-//                        'T1.s_descripcion',
                         'T1.s_numero_parte',
-//                        'T1.n_precio_compra',
                         'T1.n_precio_venta',
                         'T2.s_marca_refaccion',
-//                        'T4.s_proveedor',
                         'T5.s_categoria_refaccion',
+                        'T6.id_subcategoria_refaccion',
                         'T6.s_subcategoria_refaccion',
                         'T1.s_imagen_refaccion',
                         'T1.n_stock_actual',
-//                        'T7.s_posicion_vehiculo',
-//                        'T8.s_ubicacion_almacen',
                         'T9.s_estatus_refaccion',
                     )
                     ->where('T1.b_activo', 1)
                     ->orderBy('T1.id_refaccion', 'DESC')
                     ->get();
 
-                // Respuesta de éxito
                 return response()->json([
                     'status' => 'success',
                     'code' => 200,
@@ -196,7 +181,6 @@ class RefaccionController extends Controller
                 ], 200);
 
         } catch (\Illuminate\Database\QueryException $e) {
-            // Error de base de datos
             return response()->json([
                 'status' => 'error',
                 'code' => 500,
@@ -204,7 +188,6 @@ class RefaccionController extends Controller
             ], 500);
 
         } catch (\Exception $e) {
-            // Error general
             return response()->json([
                 'status' => 'error',
                 'code' => 500,
@@ -272,21 +255,18 @@ class RefaccionController extends Controller
             }
 
 
-            // --- INICIO: LÓGICA DE EQUIVALENCIAS CON TABLAS CORRECTAS ---
-
-            // 2. BUSCAR EL ID DEL GRUPO USANDO TU TABLA PIVOTE 'tr_refacciones_equivalencias'
             $grupo_equivalencia = DB::table('tr_refacciones_equivalencias')
                 ->where('id_refaccion', $id_refaccion)
+                ->where('b_activo', 1)
                 ->first();
 
-            $equivalencias = []; // Inicializamos como arreglo vacío
+            $equivalencias = [];
 
-            // 3. SI LA REFACCIÓN PERTENECE A UN GRUPO...
+
             if ($grupo_equivalencia) {
-                // Obtenemos el ID del grupo de la tabla tw_equivalencias
                 $id_equivalencia = $grupo_equivalencia->id_equivalencia;
 
-                // ...BUSCAMOS TODAS LAS REFACCIONES DE ESE GRUPO
+
                 $equivalencias = DB::table('tr_refacciones_equivalencias AS T_PIVOT')
                     ->join('tw_refacciones AS T_REF', 'T_PIVOT.id_refaccion', '=', 'T_REF.id_refaccion')
                     ->leftJoin('tc_marcas_refacciones AS T_MARCA', 'T_REF.id_marca_refaccion', '=', 'T_MARCA.id_marca_refaccion')
@@ -297,16 +277,14 @@ class RefaccionController extends Controller
                         'T_MARCA.s_marca_refaccion',
                         'T_REF.s_imagen_refaccion'
                     )
-                    ->where('T_PIVOT.id_equivalencia', $id_equivalencia) // 👈 Usando tu columna correcta
-                    ->where('T_PIVOT.id_refaccion', '!=', $id_refaccion)  // Excluimos la refacción actual
+                    ->where('T_PIVOT.id_equivalencia', $id_equivalencia)
+                    ->where('T_PIVOT.id_refaccion', '!=', $id_refaccion)
                     ->where('T_REF.b_activo', 1)
+                    ->where('T_PIVOT.b_activo', 1)
                     ->get();
             }
 
-            // 4. AÑADIMOS EL ARREGLO AL OBJETO DE DATOS PRINCIPAL
             $data->refacciones_equivalentes = $equivalencias;
-
-            // --- FIN: LÓGICA DE EQUIVALENCIAS ---
 
             return response()->json([
                 'status'  => 'success',
@@ -329,8 +307,8 @@ class RefaccionController extends Controller
     {
         try {
             $request->validate([
-                's_nombre_refaccion' => 'required|string|max:255|unique:tw_refacciones,s_nombre_refaccion,' . $id . ',id_refaccion',
-                's_numero_parte' => 'nullable|string|max:255|unique:tw_refacciones,s_numero_parte,' . $id . ',id_refaccion',
+                's_nombre_refaccion' => 'required|string|max:255',
+                's_numero_parte' => 'nullable|string|max:255',
                 's_imagen_refaccion' => 'nullable|string|max:255',
                 'n_precio_compra' => 'nullable|numeric|min:0',
                 'n_precio_venta' => 'nullable|numeric|min:0',
@@ -346,45 +324,103 @@ class RefaccionController extends Controller
                 'id_ubicacion_almacen' => 'nullable|integer|exists:tc_ubicaciones_almacen,id_ubicacion_almacen',
                 'b_importado' => 'nullable|boolean',
                 'id_usuario_edita' => 'nullable|integer|exists:users,id',
+                'refacciones_equivalentes' => 'nullable|array',
+                'refacciones_equivalentes.*' => 'integer|exists:tw_refacciones,id_refaccion',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'status' => 'error',
                 'code' => 422,
-                'message' => [$e->errors()],
-            ], 422);
+                'message' => [$e->errors()]], 422);
         }
 
-        // 2. Lógica en base de datos dentro de transacción
         try {
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $refaccion = Refaccion::findOrFail($id);
+            $idUsuario = $request->id_usuario_edita ?? null;
 
-            $refaccion->s_nombre_refaccion          = $request->s_nombre_refaccion;
-            $refaccion->s_numero_parte              = $request->s_numero_parte;
-            $refaccion->s_imagen_refaccion          = $request->s_imagen_refaccion ?? $refaccion->s_imagen_refaccion;
-            $refaccion->n_precio_compra             = $request->n_precio_compra ?? $refaccion->n_precio_compra;
-            $refaccion->n_precio_venta              = $request->n_precio_venta
-                ?? ($request->n_precio_compra
-                    ? $request->n_precio_compra * 1.4   //TODO Ajustar una vez que se tenga la tabla configuraciones
-                    : $refaccion->n_precio_venta);
-            $refaccion->n_precio_mayoreo              = $request->n_precio_mayoreo ?? $refaccion->n_precio_mayoreo;
-            $refaccion->n_stock_actual              = $request->n_stock_actual ?? $refaccion->n_stock_actual;
-            $refaccion->id_marca_refaccion          = $request->id_marca_refaccion ?? $refaccion->id_marca_refaccion;
-            $refaccion->id_unidad_medida            = $request->id_unidad_medida ?? $refaccion->id_unidad_medida;
-            $refaccion->id_proveedor                 = $request->id_proveedor ?? $refaccion->id_proveedor;
-            $refaccion->id_clase_refaccion          = $request->id_clase_refaccion ?? $refaccion->id_clase_refaccion;
-            $refaccion->id_categoria_refaccion      = $request->id_categoria_refaccion ?? $refaccion->id_categoria_refaccion;
-            $refaccion->id_subcategoria_refaccion   = $request->id_subcategoria_refaccion ?? $refaccion->id_subcategoria_refaccion;
-            $refaccion->id_posicion_vehiculo        = $request->id_posicion_vehiculo ?? $refaccion->id_posicion_vehiculo;
-            $refaccion->id_ubicacion_almacen        = $request->id_ubicacion_almacen ?? $refaccion->id_ubicacion_almacen;
-            $refaccion->b_importado                 = $request->b_importado ?? $refaccion->b_importado;
-            $refaccion->id_usuario_edita            = $request->id_usuario_edita ?? null;
-
+            $refaccion->s_nombre_refaccion              = $request->s_nombre_refaccion;
+            $refaccion->s_numero_parte                  = $request->s_numero_parte;
+            $refaccion->s_imagen_refaccion              = $request->s_imagen_refaccion ?? $refaccion->s_imagen_refaccion;
+            $refaccion->n_precio_compra                 = $request->n_precio_compra ?? $refaccion->n_precio_compra;
+            $refaccion->n_precio_venta                  = $request->n_precio_venta ?? $refaccion->n_precio_venta;
+            $refaccion->n_precio_mayoreo                = $request->n_precio_mayoreo ?? $refaccion->n_precio_mayoreo;
+            $refaccion->n_stock_actual                  = $request->n_stock_actual ?? $refaccion->n_stock_actual;
+            $refaccion->id_marca_refaccion              = $request->id_marca_refaccion ?? $refaccion->id_marca_refaccion;
+            $refaccion->id_unidad_medida                = $request->id_unidad_medida ?? $refaccion->id_unidad_medida;
+            $refaccion->id_proveedor                    = $request->id_proveedor ?? $refaccion->id_proveedor;
+            $refaccion->id_clase_refaccion              = $request->id_clase_refaccion ?? $refaccion->id_clase_refaccion;
+            $refaccion->id_categoria_refaccion          = $request->id_categoria_refaccion ?? $refaccion->id_categoria_refaccion;
+            $refaccion->id_subcategoria_refaccion       = $request->id_subcategoria_refaccion ?? $refaccion->id_subcategoria_refaccion;
+            $refaccion->id_posicion_vehiculo            = $request->id_posicion_vehiculo ?? $refaccion->id_posicion_vehiculo;
+            $refaccion->id_ubicacion_almacen            = $request->id_ubicacion_almacen ?? $refaccion->id_ubicacion_almacen;
+            $refaccion->b_importado                     = $request->b_importado ?? $refaccion->b_importado;
+            $refaccion->id_usuario_edita                = $request->id_usuario_edita  ?? null;
             $refaccion->save();
 
-            \DB::commit();
+
+            $grupoActual = DB::table('tr_refacciones_equivalencias')
+                ->where('id_refaccion', $id)->where('b_activo', 1)->first();
+            $idGrupoActual = $grupoActual ? $grupoActual->id_equivalencia : null;
+            $nuevosEquivalentesIds = $request->input('refacciones_equivalentes', []);
+
+            if (empty($nuevosEquivalentesIds)) {
+                if ($idGrupoActual) {
+                    DB::table('tr_refacciones_equivalencias')
+                        ->where('id_refaccion', $id)
+                        ->update(['b_activo' => 0, 'id_usuario_edita' => $idUsuario]);
+
+                    $miembrosActivos = DB::table('tr_refacciones_equivalencias')
+                        ->where('id_equivalencia', $idGrupoActual)->where('b_activo', 1)->count();
+
+                    if ($miembrosActivos <= 1) {
+                        DB::table('tr_refacciones_equivalencias')
+                            ->where('id_equivalencia', $idGrupoActual)
+                            ->update(['b_activo' => 0, 'id_usuario_edita' => $idUsuario]);
+
+                        DB::table('tw_equivalencias')
+                            ->where('id_equivalencia', $idGrupoActual)
+                            ->update(['b_activo' => 0, 'id_usuario_edita' => $idUsuario]);
+                    }
+                }
+            }
+
+            else {
+                $gruposNuevos = DB::table('tr_refacciones_equivalencias')
+                    ->whereIn('id_refaccion', $nuevosEquivalentesIds)->where('b_activo', 1)->distinct()->pluck('id_equivalencia');
+
+                if ($gruposNuevos->count() > 1) {
+                    throw new \Exception("Error: Las refacciones seleccionadas pertenecen a grupos de equivalencia distintos.");
+                }
+
+                $idGrupoNuevo = $gruposNuevos->first();
+
+                if ($idGrupoActual && $idGrupoNuevo && $idGrupoActual != $idGrupoNuevo) {
+                    throw new \Exception("Error: No se puede mover una refacción de un grupo a otro en esta operación.");
+                }
+
+                $idDelGrupoFinal = $idGrupoActual ?: $idGrupoNuevo;
+
+                if (!$idDelGrupoFinal) {
+                    $nuevoGrupo = new Equivalencia();
+                    $nuevoGrupo->s_nombre_equivalencia = 'Grupo para ' . $refaccion->s_nombre_refaccion;
+                    $nuevoGrupo->id_usuario_crea = $idUsuario;
+                    $nuevoGrupo->save();
+                    $idDelGrupoFinal = $nuevoGrupo->id_equivalencia;
+                }
+
+                $todasLasRefaccionesIds = array_unique(array_merge([$id], $nuevosEquivalentesIds));
+                foreach ($todasLasRefaccionesIds as $refId) {
+                    DB::table('tr_refacciones_equivalencias')->updateOrInsert(
+                        ['id_refaccion' => $refId, 'id_equivalencia' => $idDelGrupoFinal],
+                        ['b_activo' => 1, 'id_usuario_crea' => $idUsuario, 'id_usuario_edita' => $idUsuario, 'updated_at' => now()]
+                    );
+                }
+            }
+
+
+            DB::commit();
 
             return response()->json([
                 'status'  => 'success',
@@ -394,21 +430,11 @@ class RefaccionController extends Controller
             ], 200);
 
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            \DB::rollBack();
-            return response()->json([
-                'status'  => 'error',
-                'code'    => 404,
-                'message' => 'La refacción no existe.',
-            ], 404);
-
+            DB::rollBack();
+            return response()->json(['status'  => 'error', 'code'    => 404, 'message' => 'La refacción no existe.'], 404);
         } catch (\Exception $e) {
-            \DB::rollBack();
-            return response()->json([
-                'status'  => 'error',
-                'code'    => 500,
-                'message' => 'Error al actualizar la refacción.',
-                'error'   => $e->getMessage(),
-            ], 500);
+            DB::rollBack();
+            return response()->json(['status'  => 'error', 'code'    => 500, 'message' => 'Error al actualizar la refacción.', 'error'   => $e->getMessage()], 500);
         }
     }
 
@@ -440,7 +466,7 @@ class RefaccionController extends Controller
         try {
             DB::beginTransaction();
 
-            $datosRefacciones = $request->input('refacciones'); // 👈 ahora se toma de la clave correcta
+            $datosRefacciones = $request->input('refacciones');
 
             foreach ($datosRefacciones as $datos) {
                 $refaccion = new Refaccion();
@@ -451,7 +477,6 @@ class RefaccionController extends Controller
                 $refaccion->id_categoria_refaccion = $datos['id_categoria_refaccion'];
                 $refaccion->id_subcategoria_refaccion = $datos['id_subcategoria_refaccion'];
 
-                // Valores por defecto
                 $refaccion->s_imagen_refaccion   = null;
                 $refaccion->n_precio_compra      = 0;
                 $refaccion->n_precio_venta       = 0;
