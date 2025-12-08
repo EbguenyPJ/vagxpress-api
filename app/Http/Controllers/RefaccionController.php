@@ -45,13 +45,31 @@ class RefaccionController extends Controller
         try {
             \DB::beginTransaction();
 
+            $utilidadBase = DB::table('tc_tipos_configuraciones AS T1')
+                ->leftJoin('tc_porcentajes_utilidad AS T2', 'T2.id_tipo_configuracion', '=', 'T1.id_tipo_configuracion')
+                ->select(
+                    'T2.n_porcentaje_utilidad',
+                )
+                ->where('T1.id_tipo_configuracion', 1)
+                ->first();
+
+
+
+            if(!$utilidadBase){
+                return response()->json([
+                    'status' => 'error',
+                    'code' => 404,
+                    'message' => "Error al obtener el porcetaje e utilidad base",
+                ], 422);
+            }
+
             $refaccion = new Refaccion();
             $refaccion->s_nombre_refaccion          = $request->s_nombre_refaccion;
             $refaccion->s_numero_parte              = $request->s_numero_parte;
             $refaccion->s_imagen_refaccion          = $request->s_imagen_refaccion ?? null;
             $refaccion->n_precio_compra             = $request->n_precio_compra ?? 0;
-            $refaccion->n_precio_venta              = $request->n_precio_venta ?? ($request->n_precio_compra ? $request->n_precio_compra * 1.4 : 0);
-            $refaccion->n_stock_actual              = $request->n_stock_actual ?? 0;                                     //TODO Ajustar para multiplicar por el porcentaje de la tabla de configuraciones en ves de usar 1.4
+            $refaccion->n_precio_venta              = $request->n_precio_venta ?? (float) ($request->n_precio_compra ? $request->n_precio_compra * (1 + $utilidadBase->n_porcentaje_utilidad / 100) : 0);
+            $refaccion->n_stock_actual              = $request->n_stock_actual ?? 0;
             $refaccion->id_marca_refaccion          = $request->id_marca_refaccion;
             $refaccion->id_unidad_medida            = $request->id_unidad_medida ?? null;
             $refaccion->id_proveedor                = $request->id_proveedor ?? null;
