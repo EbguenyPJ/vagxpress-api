@@ -173,19 +173,25 @@ class RefaccionController extends Controller
                     ->leftJoin('tc_posiciones_vehiculo AS T7', 'T1.id_posicion_vehiculo', '=', 'T7.id_posicion_vehiculo')
                     ->leftJoin('tc_ubicaciones_almacen AS T8', 'T1.id_ubicacion_almacen', '=', 'T8.id_ubicacion_almacen')
                     ->leftJoin('tc_estatus_refacciones AS T9', 'T1.id_estatus_refaccion', '=', 'T9.id_estatus_refaccion')
-
+                    ->leftJoin('tc_clases_refacciones AS T10', 'T1.id_clase_refaccion', '=', 'T10.id_clase_refaccion')
                     ->select(
                         'T1.id_refaccion',
                         'T1.s_nombre_refaccion',
                         'T1.s_numero_parte',
                         'T1.n_precio_venta',
+                        'T1.s_codigo_qr',
                         'T2.s_marca_refaccion',
                         'T5.s_categoria_refaccion',
                         'T6.id_subcategoria_refaccion',
                         'T6.s_subcategoria_refaccion',
                         'T1.s_imagen_refaccion',
                         'T1.n_stock_actual',
+                        'T1.id_estatus_refaccion',
                         'T9.s_estatus_refaccion',
+                        'T9.s_color_estatus_refaccion',
+                        'T1.id_clase_refaccion',
+                        'T10.s_clase_refaccion',
+                        'T10.s_color_clase_refaccion',
                     )
                     ->where('T1.b_activo', 1)
                     ->orderBy('T1.id_refaccion', 'DESC')

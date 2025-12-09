@@ -39,8 +39,14 @@ Route::post('crear-refaccion', 'App\Http\Controllers\RefaccionController@crearRe
 Route::post('crear-refacciones-masivo', 'App\Http\Controllers\RefaccionController@crearRefaccionesMasivo');
 
 
+
 //          |---------------------      Equivalencias     ---------------------|
 
+
+
+
+//          |---------------------      Ventas     ---------------------|
+Route::post('crear-venta', 'App\Http\Controllers\VentaController@crearVenta');
 
 
 //          |---------------------      Proveedores     ---------------------|
