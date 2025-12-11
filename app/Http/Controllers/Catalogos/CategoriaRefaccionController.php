@@ -66,9 +66,11 @@ class CategoriaRefaccionController extends Controller
     public function getCategoriasRefacciones()
     {
         try {
-            $data = DB::table('tc_categorias_refacciones')
+            $data = DB::table('tc_categorias_refacciones AS T1')
                 ->select(
-                    '*'
+                    'T1.id_categoria_refaccion AS id',
+                    'T1.s_categoria_refaccion AS nombre',
+                    'T1.s_img_categoria_refaccion AS imagen',
                 )
                 ->where('b_activo', 1)
                 ->get();

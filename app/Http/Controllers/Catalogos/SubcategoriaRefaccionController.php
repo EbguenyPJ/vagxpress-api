@@ -11,9 +11,12 @@ class SubcategoriaRefaccionController extends Controller
     public function getSubcategoriasRefacciones()
     {
         try {
-            $data = DB::table('tc_subcategorias_refacciones')
+            $data = DB::table('tc_subcategorias_refacciones AS T1')
                 ->select(
-                    '*'
+                    'T1.id_subcategoria_refaccion',
+                    'T1.id_categoria_refaccion',
+                    'T1.s_subcategoria_refaccion',
+                    'T1.s_img_subcategoria_refaccion',
                 )
                 ->where('b_activo', 1)
                 ->get();
