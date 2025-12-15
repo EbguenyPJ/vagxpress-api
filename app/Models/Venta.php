@@ -21,6 +21,8 @@ class Venta extends Model
         'id_cliente',
         'id_usuario_crea',
         'id_usuario_modifica',
+        'id_metodo_pago',
+        'id_cliente',
         'b_activo'
     ];
 }

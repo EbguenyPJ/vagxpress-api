@@ -18,6 +18,7 @@ return new class extends Migration
             $table->decimal('n_total', 12, 2)->nullable()->default(0);
             $table->integer('n_cantidad_refacciones')->nullable()->default(0);
             $table->unsignedInteger('id_estatus_venta')->nullable();
+            $table->unsignedInteger('id_metodo_pago')->nullable();
             $table->unsignedInteger('id_cliente')->nullable();
             $table->unsignedInteger('id_usuario_crea')->nullable();
             $table->unsignedInteger('id_usuario_modifica')->nullable();

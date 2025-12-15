@@ -3,19 +3,20 @@
 namespace App\Http\Controllers\Catalogos;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class PorcentajeUtilidadController extends Controller
+class MetodoPagoController extends Controller
 {
-    public function getPorcentajesUtilidad()
+    public function getMetodosPagos()
     {
         try {
-            $data = DB::table('tc_porcentajes_utilidad AS T1')
+            $data = DB::table('tc_metodos_pagos AS T1')
                 ->select(
-                    'T1.id_porcentaje_utilidad',
-                    'T1.n_porcentaje_utilidad',
+                    'T1.id_metodo_pago',
+                    'T1.s_metodo_pago',
+                    'T1.s_img_metodo_pago',
                 )
-                ->where('id_tipo_configuracion', 3)
                 ->where('b_activo', 1)
                 ->get();
 
@@ -23,21 +24,21 @@ class PorcentajeUtilidadController extends Controller
                 return [
                     'status' => 'error',
                     'code' => 400,
-                    'message' => 'No hay porcentajes disponibles',
+                    'message' => 'No hay métodos de pago disponibles',
                 ];
             }
 
             return [
                 'status' => 'success',
                 'code' => 200,
-                'message' => 'Porcentajes de utilidad obtenidos correctamente',
+                'message' => 'Métodos de pagos obtenidos correctamente',
                 'data' => $data
             ];
         } catch (\Exception $e) {
             return [
                 'status' => 'error',
                 'code' => 500,
-                'message' => 'Error al obtener los porcentajes de utilidad',
+                'message' => 'Error al obtener los Métodos de pagos',
                 'error' => $e->getMessage()
             ];
         }
