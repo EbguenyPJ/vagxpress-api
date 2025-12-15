@@ -8,7 +8,6 @@ use DB;
 use App\Models\User;
 use App\Models\Empleado;
 use App\Models\TipoEmpleado;
-use App\Models\Sucursal;
 use Illuminate\Support\Facades\Hash;
 
 class UserMovilController extends Controller
@@ -61,14 +60,6 @@ class UserMovilController extends Controller
             $empleado->s_tipo_empleado = $tipoEmpleado ?? 'No especificado';
 
 
-            // Obtener el s_sucursal del empleado
-            $sucursal = Sucursal::where('id_sucursal', $empleado->id_sucursal)
-                               ->value('s_sucursal');
-
-            // Asignar el valor al objeto empleado para mantener la estructura
-            $empleado->s_sucursal = $sucursal ?? 'No especificado';
-
-
             if(Hash::check($requets->password, $user->password))
             {
                 $token = $user->createToken('auth_token')->plainTextToken;
@@ -85,8 +76,6 @@ class UserMovilController extends Controller
                     'id_tipo_usuario' => $user->id_tipo_usuario,
                     'id_tipo_empleado' => $empleado->id_tipo_empleado,
                     's_tipo_empleado' => $empleado->s_tipo_empleado,
-                    'id_sucursal' => $empleado->id_sucursal,
-                    's_sucursal' => $empleado->s_sucursal,
                 ];
 
                 return $result;
