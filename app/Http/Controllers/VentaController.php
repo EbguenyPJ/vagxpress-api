@@ -17,14 +17,24 @@ class VentaController extends Controller
     {
         try {
             $data = DB::table('tw_ventas AS T1')
+                ->leftJoin('tc_estatus_ventas AS T2', 'T2.id_estatus_venta', '=', 'T1.id_estatus_venta')
+                ->leftJoin('tc_metodos_pagos AS T3', 'T3.id_metodo_pago', '=', 'T1.id_metodo_pago')
+                ->leftJoin('tw_clientes AS T4', 'T4.id_cliente', '=', 'T1.id_cliente')
                 ->select(
                     'T1.id_venta',
                     'T1.id_venta',
                     'T1.n_subtotal',
+                    'T1.n_porcentaje_iva',
                     'T1.n_total',
                     'T1.n_cantidad_refacciones',
+                    'T1.id_estatus_venta',
+                    'T2.s_estatus_venta',
+                    'T1.id_metodo_pago',
+                    'T3.s_metodo_pago',
+                    'T1.id_cliente',
+                    'T4.s_nombre_cliente',
                 )
-                ->where('b_activo', 1)
+                ->where('T1.b_activo', 1)
                 ->orderBy('id_venta', 'desc')
                 ->get();
 
@@ -32,7 +42,7 @@ class VentaController extends Controller
                 return [
                     'status' => 'error',
                     'code' => 400,
-                    'message' => 'No hay porcentajes disponibles',
+                    'message' => 'No hay ventas disponibles',
                 ];
             }
 
