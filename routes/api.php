@@ -29,6 +29,8 @@ Route::get('mostrar-clases-refacciones', 'App\Http\Controllers\Catalogos\ClaseRe
 Route::get('mostrar-unidades-medida', 'App\Http\Controllers\Catalogos\UnidadMedidaController@getUnidadesMedida');
 Route::get('mostrar-posiciones-vehiculo', 'App\Http\Controllers\Catalogos\PosicionVehiculoController@getPosicionesVehiculo');
 Route::get('mostrar-ubicaciones-almacen', 'App\Http\Controllers\Catalogos\UbicacionAlmacenController@getUbicacionesAlmacen');
+Route::get('mostrar-porcentajes-utilidad', 'App\Http\Controllers\Catalogos\PorcentajeUtilidadController@getPorcentajesUtilidad');
+Route::get('mostrar-metodos-pagos', 'App\Http\Controllers\Catalogos\MetodoPagoController@getMetodosPagos');
 
 
 //          |---------------------      Refacciones     ---------------------|
@@ -46,11 +48,13 @@ Route::post('crear-refacciones-masivo', 'App\Http\Controllers\RefaccionControlle
 
 
 //          |---------------------      Ventas     ---------------------|
+Route::get('mostrar-ventas', 'App\Http\Controllers\VentaController@getVentas');
 Route::post('crear-venta', 'App\Http\Controllers\VentaController@crearVenta');
 
 
 //          |---------------------      Proveedores     ---------------------|
 Route::get('mostrar-proveedores', 'App\Http\Controllers\ProveedorController@getProveedores');
+
 
 
 
@@ -64,4 +68,11 @@ Route::get('empleados/listar-empleados-sin-usuario', 'App\Http\Controllers\Emple
 
 
 
+
+
+
+//          |---------------------      VagXpressMovil     ---------------------|
+Route::post('login-movil', 'App\Http\Controllers\Movil\UserMovilController@login');
+Route::get('gastos/tipos', 'App\Http\Controllers\Movil\GastoController@getTiposGastos');
+Route::post('gastos/crear-gasto-movil', 'App\Http\Controllers\Movil\GastoController@crearGastoMovil');
 

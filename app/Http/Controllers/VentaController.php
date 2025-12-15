@@ -13,6 +13,44 @@ use Illuminate\Support\Facades\DB;
 
 class VentaController extends Controller
 {
+    public function getVentas()
+    {
+        try {
+            $data = DB::table('tw_ventas AS T1')
+                ->select(
+                    'T1.id_venta',
+                    'T1.id_venta',
+                    'T1.n_subtotal',
+                    'T1.n_total',
+                    'T1.n_cantidad_refacciones',
+                )
+                ->where('b_activo', 1)
+                ->orderBy('id_venta', 'desc')
+                ->get();
+
+            if ($data->isEmpty()) {
+                return [
+                    'status' => 'error',
+                    'code' => 400,
+                    'message' => 'No hay porcentajes disponibles',
+                ];
+            }
+
+            return [
+                'status' => 'success',
+                'code' => 200,
+                'message' => 'Porcentajes de utilidad obtenidos correctamente',
+                'data' => $data
+            ];
+        } catch (\Exception $e) {
+            return [
+                'status' => 'error',
+                'code' => 500,
+                'message' => 'Error al obtener los porcentajes de utilidad',
+                'error' => $e->getMessage()
+            ];
+        }
+    }
     public function crearVenta(Request $request)
     {
         try {
@@ -22,7 +60,7 @@ class VentaController extends Controller
 
                 'refacciones' => 'nullable|array',
                 'refacciones.*.n_cantidad' => 'required|numeric|min:1',
-                //'refacciones.*.id_porcentaje_utilidad' => 'nullable|numeric|min:1|exists:tc_porcentaje_utilidad,id_porcentaje_utilidad',
+                'refacciones.*.id_porcentaje_utilidad' => 'nullable|numeric|min:1|exists:tc_porcentajes_utilidad,id_porcentaje_utilidad',
                 'refacciones.*.id_refaccion' => 'nullable|numeric|min:1',
 
 
@@ -84,16 +122,18 @@ class VentaController extends Controller
             $detalleCreado= [];
             foreach ($datosRefacciones as $dataRefaccion) {
                 $refaccion = Refaccion::findOrFail($dataRefaccion['id_refaccion']);
-                //$utilidad = PorcentajeUtilidad::findOrFail($dataRefaccion['id_porcentaje_utilidad']);
+
                 $utilidad = 1;
+                    $porcentajeUtilidad = PorcentajeUtilidad::findOrFail($dataRefaccion['id_porcentaje_utilidad']);
+                    $utilidad += $porcentajeUtilidad->porcentaje_utilidad / 100;
+//                if($dataRefaccion["id_porcentaje_utilidad"] !== null){
+//                }
 
                 $nuevaVentaRefaccion = new VentaRefaccion();
                 $nuevaVentaRefaccion->n_cantidad                =   $dataRefaccion['n_cantidad'];
                 $nuevaVentaRefaccion->n_costo_unitario          =   $refaccion->n_precio_venta;
-                //$nuevaVentaRefaccion->n_porcentaje_utilidad     =   $utilidad->n_porcentaje_utilidad;
-                $nuevaVentaRefaccion->n_porcentaje_utilidad     =   0;
-                //$nuevaVentaRefaccion->n_total                   =   $dataRefaccion['n_cantidad'] * $refaccion->n_precio_venta * $utilidad->n_porcentaje_utilidad;
-                $nuevaVentaRefaccion->n_total                   =   $dataRefaccion['n_cantidad'] * $refaccion->n_precio_venta * 1;
+                $nuevaVentaRefaccion->n_porcentaje_utilidad     =   $porcentajeUtilidad->n_porcentaje_utilidad;
+                $nuevaVentaRefaccion->n_total                   =   $dataRefaccion['n_cantidad'] * $refaccion->n_precio_venta * $utilidad;
                 $nuevaVentaRefaccion->n_stock_previo            =   $refaccion->n_stock_actual;
                 $nuevaVentaRefaccion->n_stock_posterior         =   $refaccion->n_stock_actual - $dataRefaccion['n_cantidad'];
                 $nuevaVentaRefaccion->id_venta                  =   $nuevaVenta->id_venta;
