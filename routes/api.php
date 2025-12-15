@@ -60,35 +60,10 @@ Route::get('mostrar-proveedores', 'App\Http\Controllers\ProveedorController@getP
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//          |---------------------      Rutas de empleados     ---------------------|
+Route::get('empleados/listar-empleados', 'App\Http\Controllers\EmpleadoController@listarEmpleados');
+Route::get('empleados/listar-empleados-por-usuario/{id_usuario}', 'App\Http\Controllers\EmpleadoController@listarEmpleadosPorUsuario');
+Route::get('empleados/listar-empleados-sin-usuario', 'App\Http\Controllers\EmpleadoController@listarEmpleadosSinUsuario');
 
 
 
@@ -100,3 +75,4 @@ Route::get('mostrar-proveedores', 'App\Http\Controllers\ProveedorController@getP
 Route::post('login-movil', 'App\Http\Controllers\Movil\UserMovilController@login');
 Route::get('gastos/tipos', 'App\Http\Controllers\Movil\GastoController@getTiposGastos');
 Route::post('gastos/crear-gasto-movil', 'App\Http\Controllers\Movil\GastoController@crearGastoMovil');
+
