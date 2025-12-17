@@ -23,7 +23,7 @@ class UserController extends Controller
                 ->select(
                     'T1.*',
                 )
-                ->orderBy('T1.id', 'DESC')
+                ->orderBy('T1.id', 'ASC')
                 ->get();
 
             if ($data->isEmpty()) {
@@ -100,6 +100,7 @@ class UserController extends Controller
             }
         }
     }
+    
 
 
     public function perfilUsuario($id_usuario)
