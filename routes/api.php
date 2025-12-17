@@ -76,4 +76,5 @@ Route::get('empleados/listar-empleados-sin-usuario', 'App\Http\Controllers\Emple
 Route::post('login-movil', 'App\Http\Controllers\Movil\UserMovilController@login');
 Route::get('gastos/tipos', 'App\Http\Controllers\Movil\GastoController@getTiposGastos');
 Route::post('gastos/crear-gasto-movil', 'App\Http\Controllers\Movil\GastoController@crearGastoMovil');
+Route::post('crear-embarque', 'App\Http\Controllers\Movil\EmbarqueController@crearEmbarque');
 

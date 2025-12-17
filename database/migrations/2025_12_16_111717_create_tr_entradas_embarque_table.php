@@ -11,14 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tw_evidencias_embarque', function (Blueprint $table) {
-            $table->id('id_evidencia_embarque');
+        Schema::create('tr_entradas_embarque', function (Blueprint $table) {
+            $table->id('id_entrada_embarque');
             $table->Integer('id_embarque')->nullable();
-            $table->Integer('id_tipo_evidencia')->nullable();
-            $table->String('s_evidencia_embarque')->nullable();
+            $table->Integer('id_refaccion')->nullable();
+            $table->Integer('id_pre_registro_refaccion')->nullable();
+            $table->Integer('id_estatus_entrada')->nullable();
+            $table->Integer('n_cantidad')->nullable();
+            $table->decimal('n_precio_compra', 10, 2)->default(0);
+            $table->String('s_codigo_barras')->nullable();
             $table->DateTime('d_fecha_creacion')->nullable();
             $table->tinyInteger('b_activo')->nullable()->default(1);
-            //$table->timestamps();
         });
     }
 
@@ -27,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tw_evidencias_embarque');
+        Schema::dropIfExists('tr_entradas_embarque');
     }
 };
