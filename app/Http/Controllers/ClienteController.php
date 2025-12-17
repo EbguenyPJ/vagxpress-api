@@ -77,7 +77,7 @@ class ClienteController extends Controller
                     'T2.s_tipo_cliente'
                 )
                 ->where('T1.b_activo', 1)
-                ->orderBy('T1.id_cliente', 'desc')
+                ->orderBy('T1.id_cliente', 'ASC')
                 ->get();
 
             if ($data->isEmpty()) {

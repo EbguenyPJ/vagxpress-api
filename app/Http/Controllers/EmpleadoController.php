@@ -30,7 +30,7 @@ class EmpleadoController extends Controller
                     'T5.s_sucursal',
                     'T6.s_estado_disponibilidad'
                 )
-                ->orderBy('T1.id_empleado', 'DESC')
+                ->orderBy('T1.id_empleado', 'ASC')
                 ->get();
 
             if ($data->isEmpty()) {
