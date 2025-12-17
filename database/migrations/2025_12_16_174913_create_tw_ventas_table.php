@@ -20,6 +20,7 @@ return new class extends Migration
             $table->unsignedInteger('id_estatus_venta')->nullable();
             $table->unsignedInteger('id_metodo_pago')->nullable();
             $table->unsignedInteger('id_cliente')->nullable();
+            $table->unsignedInteger('id_cuenta_bancaria')->nullable();
             $table->unsignedInteger('id_usuario_crea')->nullable();
             $table->unsignedInteger('id_usuario_modifica')->nullable();
             $table->timestamps();

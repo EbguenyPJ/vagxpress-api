@@ -32,6 +32,8 @@ Route::get('mostrar-ubicaciones-almacen', 'App\Http\Controllers\Catalogos\Ubicac
 Route::get('mostrar-porcentajes-utilidad', 'App\Http\Controllers\Catalogos\PorcentajeUtilidadController@getPorcentajesUtilidad');
 Route::get('mostrar-metodos-pagos', 'App\Http\Controllers\Catalogos\MetodoPagoController@getMetodosPagos');
 Route::get('mostrar-tipos-creditos', 'App\Http\Controllers\Catalogos\TipoCreditoController@getTiposCreditos');
+Route::get('mostrar-clientes', 'App\Http\Controllers\ClienteController@getClientes');
+Route::get('mostrar-cuentas-bancarias', 'App\Http\Controllers\Catalogos\CuentaBancariaController@getCuentasBancarias');
 
 
 //          |---------------------      Refacciones     ---------------------|
