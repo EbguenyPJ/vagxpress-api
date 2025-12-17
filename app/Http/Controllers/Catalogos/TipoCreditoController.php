@@ -3,19 +3,19 @@
 namespace App\Http\Controllers\Catalogos;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class PorcentajeUtilidadController extends Controller
+class TipoCreditoController extends Controller
 {
-    public function getPorcentajesUtilidad()
+    public function getTiposCreditos()
     {
         try {
-            $data = DB::table('tc_porcentajes_utilidad AS T1')
+            $data = DB::table('tc_tipos_creditos AS T1')
                 ->select(
-                    'T1.id_porcentaje_utilidad',
-                    'T1.n_porcentaje_utilidad',
+                    'T1.id_tipo_credito',
+                    'T1.s_tipo_credito',
                 )
-                ->where('id_tipo_configuracion', 3)
                 ->where('b_activo', 1)
                 ->get();
 
@@ -23,21 +23,21 @@ class PorcentajeUtilidadController extends Controller
                 return [
                     'status' => 'error',
                     'code' => 400,
-                    'message' => 'No hay porcentajes disponibles',
+                    'message' => 'No hay tipos de creditos disponibles',
                 ];
             }
 
             return [
                 'status' => 'success',
                 'code' => 200,
-                'message' => 'Porcentajes de utilidad obtenidos correctamente',
+                'message' => 'Tipos de Creditos obtenidos correctamente',
                 'data' => $data
             ];
         } catch (\Exception $e) {
             return [
                 'status' => 'error',
                 'code' => 500,
-                'message' => 'Error al obtener los porcentajes de utilidad',
+                'message' => 'Error al obtener los Tipos de Creditos',
                 'error' => $e->getMessage()
             ];
         }
