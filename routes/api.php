@@ -97,3 +97,4 @@ Route::get('mostrar-proveedores', 'App\Http\Controllers\ProveedorController@getP
 Route::post('login-movil', 'App\Http\Controllers\Movil\UserMovilController@login');
 Route::get('gastos/tipos', 'App\Http\Controllers\Movil\GastoController@getTiposGastos');
 Route::post('gastos/crear-gasto-movil', 'App\Http\Controllers\Movil\GastoController@crearGastoMovil');
+Route::post('crear-embarque', 'App\Http\Controllers\Movil\EmbarqueController@crearEmbarque');
