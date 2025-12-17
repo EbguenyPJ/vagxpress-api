@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Credito;
 use App\Models\Equivalencia;
 use App\Models\PorcentajeUtilidad;
 use App\Models\Refaccion;
@@ -65,8 +66,9 @@ class VentaController extends Controller
     {
         try {
             $request->validate([
-                //'id_cliente' => 'nullable|numeric|exists:tw_clientes,id_cliente',
+                'id_cliente' => 'required|numeric|exists:tw_clientes,id_cliente',
                 'id_usuario_crea' => 'required|numeric|exists:users,id',
+                'id_metodo_pago' => 'required|numeric|exists:tc_metodos_pagos,id_metodo_pago',
 
                 'refacciones' => 'nullable|array',
                 'refacciones.*.n_cantidad' => 'required|numeric|min:1',
@@ -120,8 +122,9 @@ class VentaController extends Controller
 
             $nuevaVenta = new Venta();
             $nuevaVenta->id_estatus_venta              =   1;
-            //$nuevaVenta->id_cliente                  =   $request->id_cliente;
+            $nuevaVenta->id_cliente                  =   $request->id_cliente;
             $nuevaVenta->id_usuario_crea             =   $request->id_usuario_crea;
+            $nuevaVenta->id_metodo_pago             =   $request->id_metodo_pago;
             $nuevaVenta->save();
 
 
@@ -131,24 +134,34 @@ class VentaController extends Controller
             $subtotalRefacciones = 0;
             $detalleCreado= [];
             foreach ($datosRefacciones as $dataRefaccion) {
+
                 $refaccion = Refaccion::findOrFail($dataRefaccion['id_refaccion']);
 
                 $utilidad = 1;
+                $porcentajeUtilidad = null;
+                if($dataRefaccion['id_porcentaje_utilidad'] !== null){
                     $porcentajeUtilidad = PorcentajeUtilidad::findOrFail($dataRefaccion['id_porcentaje_utilidad']);
                     $utilidad += $porcentajeUtilidad->porcentaje_utilidad / 100;
-//                if($dataRefaccion["id_porcentaje_utilidad"] !== null){
-//                }
+                }
 
                 $nuevaVentaRefaccion = new VentaRefaccion();
                 $nuevaVentaRefaccion->n_cantidad                =   $dataRefaccion['n_cantidad'];
                 $nuevaVentaRefaccion->n_costo_unitario          =   $refaccion->n_precio_venta;
-                $nuevaVentaRefaccion->n_porcentaje_utilidad     =   $porcentajeUtilidad->n_porcentaje_utilidad;
+                $nuevaVentaRefaccion->n_porcentaje_utilidad     =   $porcentajeUtilidad->n_porcentaje_utilidad?? null;
                 $nuevaVentaRefaccion->n_total                   =   $dataRefaccion['n_cantidad'] * $refaccion->n_precio_venta * $utilidad;
                 $nuevaVentaRefaccion->n_stock_previo            =   $refaccion->n_stock_actual;
                 $nuevaVentaRefaccion->n_stock_posterior         =   $refaccion->n_stock_actual - $dataRefaccion['n_cantidad'];
                 $nuevaVentaRefaccion->id_venta                  =   $nuevaVenta->id_venta;
                 $nuevaVentaRefaccion->id_refaccion              =   $dataRefaccion['id_refaccion'];
                 $nuevaVentaRefaccion->save();
+
+
+
+                // Agrega el nombre para usarlo en el PDF sin hacer otra consulta
+                $detalleParaTicket = $nuevaVentaRefaccion->toArray();
+                $detalleParaTicket['nombre_refaccion'] = $refaccion->s_nombre_refaccion; // O como se llame el campo nombre
+
+                $detalleCreado[] = $detalleParaTicket;
 
 
 
@@ -165,6 +178,22 @@ class VentaController extends Controller
             $nuevaVenta->n_cantidad_refacciones      =   $count;
             $nuevaVenta->save();
 
+            if($request->id_metodo_pago == 1){
+                $nuevoCredito = new Credito();
+                $nuevoCredito->id_venta = $nuevaVenta->id_venta;
+                $nuevoCredito->n_total_a_pagar = $nuevaVenta->n_total;
+                $nuevoCredito->id_tipo_credito = 1;
+                $nuevoCredito->id_estatus_credito = 1;
+                $nuevoCredito->id_usuario_crea = $request->id_usuario_crea;
+                $nuevoCredito->save();
+
+                if($request->id_cliente !== 1){
+                    DB::table('tw_clientes')
+                        ->where('id_cliente', $request->id_cliente)
+                        ->increment('n_saldo_actual', $nuevaVenta->n_total);
+                }
+            }
+
 
 
 
@@ -172,12 +201,49 @@ class VentaController extends Controller
 
             \DB::commit();
 
+
+
+
+
+
+            $clienteModel = \DB::table('tw_clientes')->where('id_cliente', $request->id_cliente)->first();
+
+            $pdf = \PDF::loadView('tickets.venta_pos', [
+                'venta' => $nuevaVenta,
+                'detalles' => $detalleCreado,
+                'cliente' => $clienteModel, // <--- Pasamos el objeto
+                'credito' => isset($nuevoCredito) ? $nuevoCredito : null
+            ]);
+
+            // Esto es CRUCIAL para tickets térmicos largos
+            // [0, 0, ancho_puntos, largo_puntos]
+            // 226 puntos son aprox 80mm.
+            // El largo (1000) puede ser variable si usas papel continuo, pero ponle un maximo alto.
+            $pdf->setPaper([0, 0, 226, 1000], 'portrait');
+
+            // 3. Convertir a Base64
+            $ticketBase64 = base64_encode($pdf->output());
+
+            // 4. Retornar JSON incluyendo el ticket
             return response()->json([
                 'status'  => 'success',
                 'code'    => 201,
-                'message' => 'Refacción creada correctamente.',
+                'message' => 'Venta creada correctamente.',
                 'data'    => $detalleCreado,
+                'ticket_base64' => $ticketBase64 // <--- Agregamos esto
             ]);
+
+
+
+
+
+
+//            return response()->json([
+//                'status'  => 'success',
+//                'code'    => 201,
+//                'message' => 'Refacción creada correctamente.',
+//                'data'    => $detalleCreado,
+//            ]);
         } catch (\Exception $e) {
             \DB::rollBack();
 

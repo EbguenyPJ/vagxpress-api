@@ -17,6 +17,8 @@ class ClienteController extends Controller
                     'T1.s_nombre_cliente',
                     DB::raw('(T1.n_limite_credito - T1.n_saldo_actual) as saldo_actual')
                 )
+
+                ->where('T1.b_activo', 1)
                 ->where('b_activo', 1)
                 ->get();
 
@@ -44,9 +46,8 @@ class ClienteController extends Controller
         }
     }
 
-
-
-
+  
+ 
     public function getAll()
     {
         try {

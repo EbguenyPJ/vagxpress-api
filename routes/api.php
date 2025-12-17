@@ -32,11 +32,15 @@ Route::get('mostrar-ubicaciones-almacen', 'App\Http\Controllers\Catalogos\Ubicac
 Route::get('mostrar-porcentajes-utilidad', 'App\Http\Controllers\Catalogos\PorcentajeUtilidadController@getPorcentajesUtilidad');
 Route::get('mostrar-metodos-pagos', 'App\Http\Controllers\Catalogos\MetodoPagoController@getMetodosPagos');
 Route::get('mostrar-tipos-creditos', 'App\Http\Controllers\Catalogos\TipoCreditoController@getTiposCreditos');
+
+Route::get('mostrar-clientes', 'App\Http\Controllers\ClienteController@getClientes');
+Route::get('mostrar-cuentas-bancarias', 'App\Http\Controllers\Catalogos\CuentaBancariaController@getCuentasBancarias');
 Route::get('tipos-empleados', 'App\Http\Controllers\Catalogos\TipoEmpleadoController@getAll');
 Route::get('profesiones', 'App\Http\Controllers\Catalogos\ProfesionesController@getAll');
 Route::get('grados-estudios', 'App\Http\Controllers\Catalogos\GradoEstudioController@getAll');
 Route::get('sucursales', 'App\Http\Controllers\Catalogos\SucursalController@getAll');
 Route::get('tipos-cliente', 'App\Http\Controllers\Catalogos\TiposClientesController@getAll');
+
 
 
 

@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('tc_metodos_pagos', function (Blueprint $table) {
             $table->id('id_metodo_pago');
-            $table->unsignedInteger('id_tipo_pago')->nullable();
             $table->string('s_metodo_pago')->nullable();
             $table->string('s_img_metodo_pago')->nullable();
             $table->string('s_descripcion_metodo_pago')->nullable();
