@@ -32,6 +32,12 @@ Route::get('mostrar-ubicaciones-almacen', 'App\Http\Controllers\Catalogos\Ubicac
 Route::get('mostrar-porcentajes-utilidad', 'App\Http\Controllers\Catalogos\PorcentajeUtilidadController@getPorcentajesUtilidad');
 Route::get('mostrar-metodos-pagos', 'App\Http\Controllers\Catalogos\MetodoPagoController@getMetodosPagos');
 Route::get('mostrar-tipos-creditos', 'App\Http\Controllers\Catalogos\TipoCreditoController@getTiposCreditos');
+Route::get('tipos-empleados', 'App\Http\Controllers\Catalogos\TipoEmpleadoController@getAll');
+Route::get('profesiones', 'App\Http\Controllers\Catalogos\ProfesionesController@getAll');
+Route::get('grados-estudios', 'App\Http\Controllers\Catalogos\GradoEstudioController@getAll');
+Route::get('sucursales', 'App\Http\Controllers\Catalogos\SucursalController@getAll');
+Route::get('tipos-cliente', 'App\Http\Controllers\Catalogos\TiposClientesController@getAll');
+
 
 
 //          |---------------------      Refacciones     ---------------------|
@@ -57,14 +63,22 @@ Route::post('crear-venta', 'App\Http\Controllers\VentaController@crearVenta');
 Route::get('mostrar-proveedores', 'App\Http\Controllers\ProveedorController@getProveedores');
 
 
-
-
-
+//          |---------------------      Rutas de clientes     ---------------------|
+Route::get('cliente/ver-clientes', 'App\Http\Controllers\ClienteController@getClientes');
+Route::get('cliente/listar-clientes', 'App\Http\Controllers\ClienteController@getAll');
+Route::post('cliente/crear-cliente', 'App\Http\Controllers\ClienteController@crearCliente');
+Route::put('cliente/actualizar-cliente/{id_cliente}', 'App\Http\Controllers\ClienteController@actualizarCliente');
 
 //          |---------------------      Rutas de empleados     ---------------------|
-Route::get('empleados/listar-empleados', 'App\Http\Controllers\EmpleadoController@listarEmpleados');
-Route::get('empleados/listar-empleados-por-usuario/{id_usuario}', 'App\Http\Controllers\EmpleadoController@listarEmpleadosPorUsuario');
-Route::get('empleados/listar-empleados-sin-usuario', 'App\Http\Controllers\EmpleadoController@listarEmpleadosSinUsuario');
+Route::get('empleado/listar-empleados', 'App\Http\Controllers\EmpleadoController@listarEmpleados');
+Route::get('empleado/listar-empleados-por-usuario/{id_usuario}', 'App\Http\Controllers\EmpleadoController@listarEmpleadosPorUsuario');
+Route::get('empleado/listar-empleados-sin-usuario', 'App\Http\Controllers\EmpleadoController@listarEmpleadosSinUsuario');
+Route::post('empleado/crear-empleado', 'App\Http\Controllers\EmpleadoController@crearEmpleado');
+Route::put('empleado/actualizar-empleado/{id_empleado}', 'App\Http\Controllers\EmpleadoController@actualizarEmpleado');
+Route::get('empleado/habilidades-empleados/{id_empleado}', 'App\Http\Controllers\EmpleadoController@obtenerHabilidadesEmpleado');
+Route::put('empleado/actualizar-habilidades-empleado/{id_empleado}', 'App\Http\Controllers\EmpleadoController@actualizarHabilidadesEmpleado');
+Route::get('empleado/empleados-gerente/{id_sucursal}', 'App\Http\Controllers\EmpleadoController@obtenerGerenteSucursal');
+Route::get('empleado/empleados-sucursal/{id_sucursal}', 'App\Http\Controllers\EmpleadoController@listarEmpleadosPorSucursal');
 
 
 
