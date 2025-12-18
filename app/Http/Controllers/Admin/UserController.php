@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use DB;
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Empleado;
 use App\Models\TipoEmpleado;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Hash;
 
 
@@ -22,7 +23,7 @@ class UserController extends Controller
                 ->select(
                     'T1.*',
                 )
-                ->orderBy('T1.id', 'DESC')
+                ->orderBy('T1.id', 'ASC')
                 ->get();
 
             if ($data->isEmpty()) {
@@ -99,6 +100,7 @@ class UserController extends Controller
             }
         }
     }
+    
 
 
     public function perfilUsuario($id_usuario)

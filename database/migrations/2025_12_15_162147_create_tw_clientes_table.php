@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('s_comentario')->nullable();
             $table->decimal('n_saldo_actual', 12, 2)->nullable()->default(0);
             $table->decimal('n_limite_credito', 12, 2)->nullable()->default(0);
+            $table->unsignedInteger('id_tipo_cliente')->nullable();
             $table->unsignedInteger('id_usuario_crea')->nullable();
             $table->unsignedInteger('id_usuario_modifica')->nullable();
             $table->unsignedTinyInteger('b_credito')->nullable()->default(0);
