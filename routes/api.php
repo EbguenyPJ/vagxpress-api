@@ -77,4 +77,8 @@ Route::post('login-movil', 'App\Http\Controllers\Movil\UserMovilController@login
 Route::get('gastos/tipos', 'App\Http\Controllers\Movil\GastoController@getTiposGastos');
 Route::post('gastos/crear-gasto-movil', 'App\Http\Controllers\Movil\GastoController@crearGastoMovil');
 Route::post('crear-embarque', 'App\Http\Controllers\Movil\EmbarqueController@crearEmbarque');
+Route::get('mostrar-embarques', 'App\Http\Controllers\Movil\EmbarqueController@getAllEmbarques');
+Route::get('mostrar-embarque/{id_embarque}', 'App\Http\Controllers\Movil\EmbarqueController@getEmbarque');
+Route::post('aprobar-embarque/{id_embarque}', 'App\Http\Controllers\Movil\EmbarqueController@aprobarEmbarque');
+Route::post('rechazar-embarque/{id_embarque}', 'App\Http\Controllers\Movil\EmbarqueController@rechazarEmbarque');
 
