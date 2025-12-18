@@ -39,7 +39,7 @@ Route::get('tipos-empleados', 'App\Http\Controllers\Catalogos\TipoEmpleadoContro
 Route::get('profesiones', 'App\Http\Controllers\Catalogos\ProfesionesController@getAll');
 Route::get('grados-estudios', 'App\Http\Controllers\Catalogos\GradoEstudioController@getAll');
 Route::get('sucursales', 'App\Http\Controllers\Catalogos\SucursalController@getAll');
-Route::get('tipos-cliente', 'App\Http\Controllers\Catalogos\TiposClientesController@getAll');
+Route::get('tipos-cliente', 'App\Http\Controllers\Catalogos\TipoClienteController@getAll');
 
 
 
@@ -50,6 +50,12 @@ Route::get('mostrar-refaccion-id/{id_refaccion}', 'App\Http\Controllers\Refaccio
 Route::put('editar-refaccion/{id_refaccion}', 'App\Http\Controllers\RefaccionController@actualizarRefaccion');
 Route::post('crear-refaccion', 'App\Http\Controllers\RefaccionController@crearRefaccion');
 Route::post('crear-refacciones-masivo', 'App\Http\Controllers\RefaccionController@crearRefaccionesMasivo');
+
+
+
+
+
+
 
 
 
@@ -65,6 +71,9 @@ Route::post('crear-venta', 'App\Http\Controllers\VentaController@crearVenta');
 
 //          |---------------------      Proveedores     ---------------------|
 Route::get('mostrar-proveedores', 'App\Http\Controllers\ProveedorController@getProveedores');
+Route::get('proveedor/listar-proveedores', 'App\Http\Controllers\ProveedorController@getAll');
+Route::post('proveedor/crear-proveedor', 'App\Http\Controllers\ProveedorController@crearProveedor');
+Route::put('proveedor/actualizar-proveedor/{id_proveedor}', 'App\Http\Controllers\ProveedorController@actualizarProveedor');
 
 
 //          |---------------------      Rutas de clientes     ---------------------|
