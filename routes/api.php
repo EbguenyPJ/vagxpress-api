@@ -18,7 +18,11 @@ Route::get('tipos-usuarios', 'App\Http\Controllers\Catalogos\TipoUsuarioControll
 
 Route::get('categorias-modulos', 'App\Http\Controllers\Catalogos\CategoriaModuloController@getCategoriasModulos');
 Route::get('modulos-usuario/{id_usuario}', 'App\Http\Controllers\Catalogos\ModuloController@getModulosUsuario');
-Route::post('modulos-usuario/{id_usuario}', 'App\Http\Controllers\Catalogos\ModuloController@updateModulosUsuario');
+Route::put('modulos/actualizar-modulos-usuario/{id_usuario}', 'App\Http\Controllers\Catalogos\ModuloController@actualizarModulosUsuario');
+Route::put('user/actualizar-modulo-web-movil/{id_usuario}', 'App\Http\Controllers\Admin\UserController@actualizarModuloWebMovil');
+Route::get('modulos-disponibles', 'App\Http\Controllers\Catalogos\ModuloController@getAllModulos');
+Route::put('TipoUsuario/actualizar-tipo-usuario/{id_usuario}', 'App\Http\Controllers\Catalogos\TipoUsuarioController@actualizarTipoUsuario');
+Route::put('User/actualizar-estado-usuario/{id_usuario}', 'App\Http\Controllers\Admin\UserController@actualizarEstatusUsuario');
 
 
 //          |---------------------      Catalogos     ---------------------|
@@ -104,4 +108,9 @@ Route::post('login-movil', 'App\Http\Controllers\Movil\UserMovilController@login
 Route::get('gastos/tipos', 'App\Http\Controllers\Movil\GastoController@getTiposGastos');
 Route::post('gastos/crear-gasto-movil', 'App\Http\Controllers\Movil\GastoController@crearGastoMovil');
 Route::post('crear-embarque', 'App\Http\Controllers\Movil\EmbarqueController@crearEmbarque');
+
+
+
+
+
 
