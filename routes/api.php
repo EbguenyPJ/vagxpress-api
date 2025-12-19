@@ -96,3 +96,15 @@ Route::get('gastos/tipos', 'App\Http\Controllers\Movil\GastoController@getTiposG
 Route::post('gastos/crear-gasto-movil', 'App\Http\Controllers\Movil\GastoController@crearGastoMovil');
 Route::post('crear-embarque', 'App\Http\Controllers\Movil\EmbarqueController@crearEmbarque');
 
+
+
+
+// =======================
+// CORTES
+// =======================
+
+Route::get('mostrar-cortes', 'App\Http\Controllers\CorteController@index');
+Route::get('mostrar-corte-id/{id_corte}','App\Http\Controllers\CorteController@show');
+Route::post('crear-corte','App\Http\Controllers\CorteController@store');
+Route::post('cerrar-corte/{id_corte}','App\Http\Controllers\CorteController@cerrar');
+Route::post('crear-corte-evidencia','App\Http\Controllers\CorteController@storeEvidencia');
