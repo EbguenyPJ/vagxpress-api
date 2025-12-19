@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\QueryException;
+use App\Models\User;
 
 class TipoUsuarioController extends Controller
 {
@@ -42,4 +43,50 @@ class TipoUsuarioController extends Controller
             ], 500);
         }
     }
+
+
+    public function actualizarTipoUsuario(Request $request, $id_usuario)
+{
+    try {
+        $user = User::find($id_usuario);
+
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'code' => 404,
+                'message' => 'Usuario no encontrado',
+            ], 404);
+        }
+
+        // Validar que el id_tipo_usuario sea un entero positivo
+        $request->validate([
+            'id_tipo_usuario' => 'required|integer|min:1',
+        ]);
+
+        // Actualizar el tipo de usuario
+        $user->id_tipo_usuario = $request->id_tipo_usuario;
+        $user->save();
+
+        return response()->json([
+            'status' => 'success',
+            'code' => 200,
+            'message' => 'Tipo de usuario actualizado correctamente',
+            'data' => [
+                'id_tipo_usuario' => $user->id_tipo_usuario,
+            ],
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'code' => 500,
+            'message' => 'Error al actualizar el tipo de usuario',
+            'error' => $e->getMessage(),
+        ], 500);
+    }      
+}
+
+
+
+
 }

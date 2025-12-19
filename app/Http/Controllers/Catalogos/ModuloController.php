@@ -50,7 +50,53 @@ class ModuloController extends Controller
             ];
         }
     }
-    public function updateModulosUsuario(Request $request, $id_usuario)
+
+
+    public function getAllModulos()
+    {
+        try {
+            $data = DB::table('tc_modulos AS T2')
+                ->leftJoin('tc_categorias_modulos AS T3', 'T2.id_categoria_modulo', '=', 'T3.id_categoria_modulo')
+                ->select(
+                    'T2.id_modulo',
+                    'T2.id_categoria_modulo',
+                    'T3.s_categoria_modulo',
+                    'T2.s_modulo',
+                    'T2.s_ruta',
+                    'T2.s_icono',
+                )
+                ->where('T2.b_activo', 1)
+                ->where('T3.b_activo', 1)
+                ->get();
+
+            if ($data->isEmpty()) {
+                return [
+                    'status' => 'error',
+                    'code' => 400,
+                    'message' => 'No hay módulos disponibles',
+                ];
+            }
+
+            return [
+                'status' => 'success',
+                'code' => 200,
+                'message' => 'Módulos obtenidos correctamente',
+                'data' => $data
+            ];
+        } catch (\Exception $e) {
+            return [
+                'status' => 'error',
+                'code' => 500,
+                'message' => 'Error al obtener módulos',
+                'error' => $e->getMessage()
+            ];
+        }
+    }
+
+
+
+
+    public function actualizarModulosUsuario(Request $request, $id_usuario)
     {
         try {
             // Validación del formato de módulos
@@ -128,4 +174,6 @@ class ModuloController extends Controller
             ], 500);
         }
     }
+
+    
 }
