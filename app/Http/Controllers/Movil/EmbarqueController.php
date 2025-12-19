@@ -503,4 +503,213 @@ class EmbarqueController extends Controller
             ], 500);
         }
     }
+
+
+
+    public function embarquesAprobados(){
+        try{
+             $data = DB::table('tw_embarques as T1')
+                ->leftjoin('tw_proveedores as T2', 'T2.id_proveedor', '=', 'T1.id_proveedor')
+                ->leftjoin('users as T3', 'T3.id', '=', 'T1.id_usuario_crea')
+                ->leftjoin('tc_estatus_embarque as T4', 'T4.id_estatus_embarque', '=', 'T1.id_estatus_embarque')
+                ->select(
+                    'T1.id_embarque',
+                    'T1.id_proveedor',
+                    'T2.s_proveedor',
+                    'T1.d_fecha_creacion',
+                    'T1.id_usuario_crea',
+                    'T3.s_nombre_completo',
+                    'T1.id_estatus_embarque',
+                    'T4.s_estatus_embarque'
+                )
+                ->where('T1.b_activo', 1)
+                ->where('T1.id_estatus_embarque', 2)
+                ->orderBy('T1.id_embarque', 'desc')
+                ->get();
+
+
+            $refacciones = DB::table('tr_entradas_embarque as T1')
+                ->leftjoin('tw_refacciones as T2', 'T2.id_refaccion', '=', 'T1.id_refaccion')
+                ->leftjoin('tc_marcas_refacciones as T3', 'T3.id_marca_refaccion', '=', 'T2.id_marca_refaccion')
+                ->leftjoin('tc_categorias_refacciones as T4', 'T4.id_categoria_refaccion', '=', 'T2.id_categoria_refaccion')
+                ->leftjoin('tc_subcategorias_refacciones as T5', 'T5.id_subcategoria_refaccion', '=', 'T2.id_subcategoria_refaccion')
+                ->leftjoin('tc_clases_refacciones as T6', 'T6.id_clase_refaccion', '=', 'T2.id_clase_refaccion')
+                ->select(
+                    //'T1.id_entrada_embarque',
+                    'T1.id_embarque',
+                    'T1.id_refaccion',
+                    'T2.s_nombre_refaccion',
+                    'T3.s_marca_refaccion',
+                    'T4.s_categoria_refaccion',
+                    'T5.s_subcategoria_refaccion',
+                    'T6.s_clase_refaccion',
+                    'T2.s_numero_parte',
+                    'T1.n_cantidad',
+                    //'T1.n_precio_compra',
+                    'T1.s_codigo_barras',
+                    //'T1.d_fecha_creacion',
+                )
+                ->where('T1.b_activo', 1)
+                ->where('T1.id_estatus_entrada', 2)
+                ->whereNotNull('T1.id_refaccion')
+                ->get()
+                ->groupBy('id_embarque');
+
+
+            $data->transform(function ($srv) use ($refacciones) {
+                $srv->refacciones = $refacciones[$srv->id_embarque] ?? [];
+                return $srv;
+            });
+
+
+
+
+
+
+
+
+
+            $refaccionesNuevas = DB::table('tr_entradas_embarque as T1')
+                ->leftjoin('tw_pre_registro_refacciones as T2', 'T2.id_pre_registro_refaccion', '=', 'T1.id_pre_registro_refaccion')
+                ->leftjoin('tc_marcas_refacciones as T3', 'T3.id_marca_refaccion', '=', 'T2.id_marca_refaccion')
+                ->leftjoin('tc_categorias_refacciones as T4', 'T4.id_categoria_refaccion', '=', 'T2.id_categoria_refaccion')
+                ->leftjoin('tc_subcategorias_refacciones as T5', 'T5.id_subcategoria_refaccion', '=', 'T2.id_subcategoria_refaccion')
+                ->leftjoin('tc_clases_refacciones as T6', 'T6.id_clase_refaccion', '=', 'T2.id_clase_refaccion')
+                ->select(
+                    //'T1.id_entrada_embarque',
+                    'T1.id_embarque',
+                    'T1.id_pre_registro_refaccion',
+                    'T2.s_nombre_refaccion',
+                    'T3.s_marca_refaccion',
+                    'T4.s_categoria_refaccion',
+                    'T5.s_subcategoria_refaccion',
+                    'T6.s_clase_refaccion',
+                    'T2.s_numero_parte',
+                    'T1.n_cantidad',
+                    //'T1.n_precio_compra',
+                    'T1.s_codigo_barras',
+                    //'T1.d_fecha_creacion',
+                )
+                ->where('T1.b_activo', 1)
+                ->where('T1.id_estatus_entrada', 2)
+                ->whereNotNull('T1.id_pre_registro_refaccion')
+                ->get()
+                ->groupBy('id_embarque');
+
+            $data->transform(function ($srv2) use ($refaccionesNuevas) {
+                $srv2->refaccionesNuevas = $refaccionesNuevas[$srv2->id_embarque] ?? [];
+                return $srv2;
+            });
+
+
+
+            // Respuesta de éxito
+            return response()->json([
+                'status' => 'success',
+                'code' => 200,
+                'data' => $data,
+                'message' => 'Embarques aprobados.'
+            ], 200);
+
+            
+        }catch (Exception $e) {
+            // Respuesta de error
+            return response()->json([
+                'status' => 'error',
+                'code' => 500,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+
+    public function getRefaccionesInsertadas(){
+        try{
+            $data = DB::table('tr_entradas_embarque as T1')
+                ->leftjoin('tw_refacciones as T2', 'T2.id_refaccion', '=', 'T1.id_refaccion')
+                ->leftjoin('tc_marcas_refacciones as T3', 'T3.id_marca_refaccion', '=', 'T2.id_marca_refaccion')
+                ->leftjoin('tc_categorias_refacciones as T4', 'T4.id_categoria_refaccion', '=', 'T2.id_categoria_refaccion')
+                ->leftjoin('tc_subcategorias_refacciones as T5', 'T5.id_subcategoria_refaccion', '=', 'T2.id_subcategoria_refaccion')
+                ->leftjoin('tc_clases_refacciones as T6', 'T6.id_clase_refaccion', '=', 'T2.id_clase_refaccion')
+                ->select(
+                    'T1.id_entrada_embarque',
+                    'T1.id_embarque',
+                    'T1.id_refaccion',
+                    'T2.s_nombre_refaccion',
+                    'T3.s_marca_refaccion',
+                    'T4.s_categoria_refaccion',
+                    'T5.s_subcategoria_refaccion',
+                    'T6.s_clase_refaccion',
+                    'T2.s_numero_parte',
+                    DB::raw('SUM(T1.n_cantidad) as n_cantidad'),
+                    'T1.n_precio_compra',
+                    'T1.s_codigo_barras',
+                     DB::raw("DATE_FORMAT(T1.d_fecha_creacion, '%Y-%m-%dT%H:%i:%s') as d_fecha_creacion"),
+                    //'T1.d_fecha_creacion',
+                )
+                ->where('T1.b_activo', 1)
+                ->where('T1.id_estatus_entrada', 2)
+                ->whereNotNull('T1.id_refaccion')
+                ->groupBy('T1.id_refaccion');
+                //->get();
+
+
+
+
+            $data2 = DB::table('tr_entradas_embarque as T1')
+                ->leftjoin('tw_pre_registro_refacciones as T2', 'T2.id_pre_registro_refaccion', '=', 'T1.id_pre_registro_refaccion')
+                ->leftjoin('tc_marcas_refacciones as T3', 'T3.id_marca_refaccion', '=', 'T2.id_marca_refaccion')
+                ->leftjoin('tc_categorias_refacciones as T4', 'T4.id_categoria_refaccion', '=', 'T2.id_categoria_refaccion')
+                ->leftjoin('tc_subcategorias_refacciones as T5', 'T5.id_subcategoria_refaccion', '=', 'T2.id_subcategoria_refaccion')
+                ->leftjoin('tc_clases_refacciones as T6', 'T6.id_clase_refaccion', '=', 'T2.id_clase_refaccion')
+                ->select(
+                    'T1.id_entrada_embarque',
+                    'T1.id_embarque',
+                    'T1.id_refaccion',
+                    'T2.s_nombre_refaccion',
+                    'T3.s_marca_refaccion',
+                    'T4.s_categoria_refaccion',
+                    'T5.s_subcategoria_refaccion',
+                    'T6.s_clase_refaccion',
+                    'T2.s_numero_parte',
+                    DB::raw('SUM(T1.n_cantidad) as n_cantidad'),
+                    'T1.n_precio_compra',
+                    'T1.s_codigo_barras',
+                    //'T1.d_fecha_creacion',
+                    DB::raw("DATE_FORMAT(T1.d_fecha_creacion, '%Y-%m-%dT%H:%i:%s') as d_fecha_creacion")
+                )
+                ->where('T1.b_activo', 1)
+                ->where('T1.id_estatus_entrada', 2)
+                ->whereNotNull('T1.id_pre_registro_refaccion')
+                ->groupBy('T1.id_pre_registro_refaccion');
+                //->get();
+
+            $data3 = $data->unionAll($data2)->get();
+
+            // $result = [
+            //     'refacciones' => $data,
+            //     'refaccionesNuevas' => $data2
+            // ];
+                
+
+
+            // Respuesta de éxito
+            return response()->json([
+                'status' => 'success',
+                'code' => 200,
+                'data' => $data3,
+                'message' => 'Refacciones'
+            ], 200);
+
+
+
+        }catch (Exception $e) {
+            // Respuesta de error
+            return response()->json([
+                'status' => 'error',
+                'code' => 500,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }
