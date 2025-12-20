@@ -112,8 +112,9 @@ Route::get('mostrar-embarques', 'App\Http\Controllers\Movil\EmbarqueController@g
 Route::get('mostrar-embarque/{id_embarque}', 'App\Http\Controllers\Movil\EmbarqueController@getEmbarque');
 Route::post('aprobar-embarque/{id_embarque}', 'App\Http\Controllers\Movil\EmbarqueController@aprobarEmbarque');
 Route::post('rechazar-embarque/{id_embarque}', 'App\Http\Controllers\Movil\EmbarqueController@rechazarEmbarque');
-Route::get('embarques-aprobados', 'App\Http\Controllers\Movil\EmbarqueController@embarquesAprobados');
+Route::get('embarques-refacciones-insertadas/{id_refaccion}', 'App\Http\Controllers\Movil\EmbarqueController@embarquesRefaccionesInsertadas');
 Route::get('refacciones-insertadas', 'App\Http\Controllers\Movil\EmbarqueController@getRefaccionesInsertadas');
+Route::get('embarques-refacciones-insertadas-nuevas/{id_pre_registro_refaccion}', 'App\Http\Controllers\Movil\EmbarqueController@embarquesRefaccionesInsertadasNuevas');
 
 
 

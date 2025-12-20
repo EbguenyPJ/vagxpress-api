@@ -506,12 +506,32 @@ class EmbarqueController extends Controller
 
 
 
-    public function embarquesAprobados(){
+    public function embarquesRefaccionesInsertadas($id_refaccion){
         try{
-             $data = DB::table('tw_embarques as T1')
-                ->leftjoin('tw_proveedores as T2', 'T2.id_proveedor', '=', 'T1.id_proveedor')
-                ->leftjoin('users as T3', 'T3.id', '=', 'T1.id_usuario_crea')
-                ->leftjoin('tc_estatus_embarque as T4', 'T4.id_estatus_embarque', '=', 'T1.id_estatus_embarque')
+            //  $data = DB::table('tw_embarques as T1')
+            //     ->leftjoin('tw_proveedores as T2', 'T2.id_proveedor', '=', 'T1.id_proveedor')
+            //     ->leftjoin('users as T3', 'T3.id', '=', 'T1.id_usuario_crea')
+            //     ->leftjoin('tc_estatus_embarque as T4', 'T4.id_estatus_embarque', '=', 'T1.id_estatus_embarque')
+            //     ->select(
+            //         'T1.id_embarque',
+            //         'T1.id_proveedor',
+            //         'T2.s_proveedor',
+            //         'T1.d_fecha_creacion',
+            //         'T1.id_usuario_crea',
+            //         'T3.s_nombre_completo',
+            //         'T1.id_estatus_embarque',
+            //         'T4.s_estatus_embarque'
+            //     )
+            //     ->where('T1.b_activo', 1)
+            //     ->where('T1.id_estatus_embarque', 2)
+            //     ->orderBy('T1.id_embarque', 'desc')
+            //     ->get();
+
+
+            $data = DB::table('tw_embarques as T1')
+                ->leftJoin('tw_proveedores as T2', 'T2.id_proveedor', '=', 'T1.id_proveedor')
+                ->leftJoin('users as T3', 'T3.id', '=', 'T1.id_usuario_crea')
+                ->leftJoin('tc_estatus_embarque as T4', 'T4.id_estatus_embarque', '=', 'T1.id_estatus_embarque')
                 ->select(
                     'T1.id_embarque',
                     'T1.id_proveedor',
@@ -524,8 +544,17 @@ class EmbarqueController extends Controller
                 )
                 ->where('T1.b_activo', 1)
                 ->where('T1.id_estatus_embarque', 2)
+                ->whereExists(function ($q) use ($id_refaccion) {
+                    $q->select(DB::raw(1))
+                    ->from('tr_entradas_embarque as E')
+                    ->whereColumn('E.id_embarque', 'T1.id_embarque')
+                    ->where('E.id_refaccion', $id_refaccion)
+                    ->where('E.b_activo', 1)
+                    ->where('E.id_estatus_entrada', 2);
+                })
                 ->orderBy('T1.id_embarque', 'desc')
                 ->get();
+
 
 
             $refacciones = DB::table('tr_entradas_embarque as T1')
@@ -551,6 +580,7 @@ class EmbarqueController extends Controller
                 )
                 ->where('T1.b_activo', 1)
                 ->where('T1.id_estatus_entrada', 2)
+                ->where('T1.id_refaccion', $id_refaccion)
                 ->whereNotNull('T1.id_refaccion')
                 ->get()
                 ->groupBy('id_embarque');
@@ -562,12 +592,77 @@ class EmbarqueController extends Controller
             });
 
 
+            // Respuesta de éxito
+            return response()->json([
+                'status' => 'success',
+                'code' => 200,
+                'data' => $data,
+                'message' => 'Embarques aprobados.'
+            ], 200);
+
+            
+        }catch (Exception $e) {
+            // Respuesta de error
+            return response()->json([
+                'status' => 'error',
+                'code' => 500,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
 
 
 
+    public function embarquesRefaccionesInsertadasNuevas($id_pre_registro_refaccion){
+        try{
+
+            // $data = DB::table('tw_embarques as T1')
+            //     ->leftjoin('tw_proveedores as T2', 'T2.id_proveedor', '=', 'T1.id_proveedor')
+            //     ->leftjoin('users as T3', 'T3.id', '=', 'T1.id_usuario_crea')
+            //     ->leftjoin('tc_estatus_embarque as T4', 'T4.id_estatus_embarque', '=', 'T1.id_estatus_embarque')
+            //     ->select(
+            //         'T1.id_embarque',
+            //         'T1.id_proveedor',
+            //         'T2.s_proveedor',
+            //         'T1.d_fecha_creacion',
+            //         'T1.id_usuario_crea',
+            //         'T3.s_nombre_completo',
+            //         'T1.id_estatus_embarque',
+            //         'T4.s_estatus_embarque'
+            //     )
+            //     ->where('T1.b_activo', 1)
+            //     ->where('T1.id_estatus_embarque', 2)
+            //     ->orderBy('T1.id_embarque', 'desc')
+            //     ->get();
 
 
 
+            $data = DB::table('tw_embarques as T1')
+                ->leftJoin('tw_proveedores as T2', 'T2.id_proveedor', '=', 'T1.id_proveedor')
+                ->leftJoin('users as T3', 'T3.id', '=', 'T1.id_usuario_crea')
+                ->leftJoin('tc_estatus_embarque as T4', 'T4.id_estatus_embarque', '=', 'T1.id_estatus_embarque')
+                ->select(
+                    'T1.id_embarque',
+                    'T1.id_proveedor',
+                    'T2.s_proveedor',
+                    'T1.d_fecha_creacion',
+                    'T1.id_usuario_crea',
+                    'T3.s_nombre_completo',
+                    'T1.id_estatus_embarque',
+                    'T4.s_estatus_embarque'
+                )
+                ->where('T1.b_activo', 1)
+                ->where('T1.id_estatus_embarque', 2)
+                ->whereExists(function ($q) use ($id_pre_registro_refaccion) {
+                    $q->select(DB::raw(1))
+                    ->from('tr_entradas_embarque as E')
+                    ->whereColumn('E.id_embarque', 'T1.id_embarque')
+                    ->where('E.id_pre_registro_refaccion', $id_pre_registro_refaccion)
+                    ->where('E.b_activo', 1)
+                    ->where('E.id_estatus_entrada', 2);
+                })
+                ->orderBy('T1.id_embarque', 'desc')
+                ->get();
 
             $refaccionesNuevas = DB::table('tr_entradas_embarque as T1')
                 ->leftjoin('tw_pre_registro_refacciones as T2', 'T2.id_pre_registro_refaccion', '=', 'T1.id_pre_registro_refaccion')
@@ -592,15 +687,15 @@ class EmbarqueController extends Controller
                 )
                 ->where('T1.b_activo', 1)
                 ->where('T1.id_estatus_entrada', 2)
+                ->where('T1.id_pre_registro_refaccion', $id_pre_registro_refaccion)
                 ->whereNotNull('T1.id_pre_registro_refaccion')
                 ->get()
                 ->groupBy('id_embarque');
 
             $data->transform(function ($srv2) use ($refaccionesNuevas) {
-                $srv2->refaccionesNuevas = $refaccionesNuevas[$srv2->id_embarque] ?? [];
+                $srv2->refacciones = $refaccionesNuevas[$srv2->id_embarque] ?? [];
                 return $srv2;
             });
-
 
 
             // Respuesta de éxito
@@ -611,7 +706,6 @@ class EmbarqueController extends Controller
                 'message' => 'Embarques aprobados.'
             ], 200);
 
-            
         }catch (Exception $e) {
             // Respuesta de error
             return response()->json([
@@ -635,6 +729,7 @@ class EmbarqueController extends Controller
                     'T1.id_entrada_embarque',
                     'T1.id_embarque',
                     'T1.id_refaccion',
+                    'T1.id_pre_registro_refaccion',
                     'T2.s_nombre_refaccion',
                     'T3.s_marca_refaccion',
                     'T4.s_categoria_refaccion',
@@ -666,6 +761,7 @@ class EmbarqueController extends Controller
                     'T1.id_entrada_embarque',
                     'T1.id_embarque',
                     'T1.id_refaccion',
+                    'T1.id_pre_registro_refaccion',
                     'T2.s_nombre_refaccion',
                     'T3.s_marca_refaccion',
                     'T4.s_categoria_refaccion',
