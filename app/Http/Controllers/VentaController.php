@@ -34,6 +34,7 @@ class VentaController extends Controller
                     'T3.s_metodo_pago',
                     'T1.id_cliente',
                     'T4.s_nombre_cliente',
+                    'T1.created_at AS fecha_venta',
                 )
                 ->where('T1.b_activo', 1)
                 ->orderBy('id_venta', 'desc')
@@ -155,11 +156,13 @@ class VentaController extends Controller
                 $nuevaVentaRefaccion->id_refaccion              =   $dataRefaccion['id_refaccion'];
                 $nuevaVentaRefaccion->save();
 
+                $refaccion->decrement('n_stock_actual', $dataRefaccion['n_cantidad']);
+
 
 
                 // Agrega el nombre para usarlo en el PDF sin hacer otra consulta
                 $detalleParaTicket = $nuevaVentaRefaccion->toArray();
-                $detalleParaTicket['nombre_refaccion'] = $refaccion->s_nombre_refaccion; // O como se llame el campo nombre
+                $detalleParaTicket['nombre_refaccion'] = $refaccion->s_nombre_refaccion;
 
                 $detalleCreado[] = $detalleParaTicket;
 
@@ -205,6 +208,23 @@ class VentaController extends Controller
 
 
 
+            //  IMPLEMENTACIÓN REQUISICIONES
+            try {
+                // id´s de las refacciones vendidas
+                $idsVendidos = collect($datosRefacciones)->pluck('id_refaccion')->toArray();
+
+                // se dispara la ejecución del evento
+                event(new \App\Events\VerificarStockBajo($idsVendidos, $request->id_usuario_crea));
+
+            } catch (\Exception $e) {
+                \Log::error("Error al generar requisición automática: " . $e->getMessage());
+            }
+            // FIN REQUISICIONES
+
+
+
+
+
 
             $clienteModel = \DB::table('tw_clientes')->where('id_cliente', $request->id_cliente)->first();
 
@@ -215,22 +235,22 @@ class VentaController extends Controller
                 'credito' => isset($nuevoCredito) ? $nuevoCredito : null
             ]);
 
-            // Esto es CRUCIAL para tickets térmicos largos
+            // Para tickets largos
             // [0, 0, ancho_puntos, largo_puntos]
             // 226 puntos son aprox 80mm.
-            // El largo (1000) puede ser variable si usas papel continuo, pero ponle un maximo alto.
+            // El largo (1000) puede ser variable si se usa papel continuo.
             $pdf->setPaper([0, 0, 226, 1000], 'portrait');
 
-            // 3. Convertir a Base64
+            // Convertir a Base64
             $ticketBase64 = base64_encode($pdf->output());
 
-            // 4. Retornar JSON incluyendo el ticket
+            // JSON incluye el ticket
             return response()->json([
                 'status'  => 'success',
                 'code'    => 201,
                 'message' => 'Venta creada correctamente.',
                 'data'    => $detalleCreado,
-                'ticket_base64' => $ticketBase64 // <--- Agregamos esto
+                'ticket_base64' => $ticketBase64
             ]);
 
 

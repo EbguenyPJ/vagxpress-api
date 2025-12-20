@@ -73,6 +73,18 @@ Route::get('mostrar-ventas', 'App\Http\Controllers\VentaController@getVentas');
 Route::post('crear-venta', 'App\Http\Controllers\VentaController@crearVenta');
 
 
+
+
+
+//          |---------------------      Requisiciones     ---------------------|
+Route::get('mostrar-requisiciones', 'App\Http\Controllers\RequisicionController@mostrarRequisiciones');
+Route::get('mostrar-requisicion/{id_requisicion}', 'App\Http\Controllers\RequisicionController@mostrarRequisicionByID');
+
+
+
+
+
+
 //          |---------------------      Proveedores     ---------------------|
 Route::get('mostrar-proveedores', 'App\Http\Controllers\ProveedorController@getProveedores');
 Route::get('proveedor/listar-proveedores', 'App\Http\Controllers\ProveedorController@getAll');
