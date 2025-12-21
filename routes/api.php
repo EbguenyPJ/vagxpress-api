@@ -146,3 +146,17 @@ Route::get('mostrar-corte-id/{id_corte}','App\Http\Controllers\CorteController@s
 Route::post('crear-corte','App\Http\Controllers\CorteController@store');
 Route::post('cerrar-corte/{id_corte}','App\Http\Controllers\CorteController@cerrar');
 Route::post('crear-corte-evidencia','App\Http\Controllers\CorteController@storeEvidencia');
+
+
+
+
+
+
+
+
+
+
+//          |---------------------      VagXpressMovil-Repartidores     ---------------------|
+Route::get('ordenes-asignadas/{id_repartidor}','App\Http\Controllers\Movil\RepartidorController@getOrdenesAsignadas');
+Route::get('detalle-orden/{id_orden}','App\Http\Controllers\Movil\RepartidorController@getDetalleOrden');
+Route::post('subir-evidencias-salida-reparto','App\Http\Controllers\Movil\RepartidorController@subirEvidenciasSalidaReparto');
