@@ -70,6 +70,7 @@ class VentaController extends Controller
                 'id_cliente' => 'required|numeric|exists:tw_clientes,id_cliente',
                 'id_usuario_crea' => 'required|numeric|exists:users,id',
                 'id_metodo_pago' => 'required|numeric|exists:tc_metodos_pagos,id_metodo_pago',
+                'id_cuenta_bancaria' => 'nullable|numeric|exists:tc_cuentas_bancarias,id_cuenta_bancaria',
 
                 'refacciones' => 'nullable|array',
                 'refacciones.*.n_cantidad' => 'required|numeric|min:1',
@@ -79,26 +80,26 @@ class VentaController extends Controller
 
 
 
-//                'n_subtotal',
-//                'n_porcentaje_iva',
-//                'n_total',
-//                'n_cantidad_refacciones',
-//                'id_estatus_venta',
-//                'id_cliente',
-//                'id_usuario_crea',
-//                'id_usuario_modifica',
+                //                'n_subtotal',
+                //                'n_porcentaje_iva',
+                //                'n_total',
+                //                'n_cantidad_refacciones',
+                //                'id_estatus_venta',
+                //                'id_cliente',
+                //                'id_usuario_crea',
+                //                'id_usuario_modifica',
 
 
 
 
-//                'n_cantidad',
-//                'n_costo_unitario',
-//                'n_porcentaje_utilidad',
-//                'n_total',
-//                'n_stock_previo',
-//                'n_stock_posterior',
-//                'id_venta',
-//                'id_refaccion',
+                //                'n_cantidad',
+                //                'n_costo_unitario',
+                //                'n_porcentaje_utilidad',
+                //                'n_total',
+                //                'n_stock_previo',
+                //                'n_stock_posterior',
+                //                'id_venta',
+                //                'id_refaccion',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -126,6 +127,7 @@ class VentaController extends Controller
             $nuevaVenta->id_cliente                  =   $request->id_cliente;
             $nuevaVenta->id_usuario_crea             =   $request->id_usuario_crea;
             $nuevaVenta->id_metodo_pago             =   $request->id_metodo_pago;
+            $nuevaVenta->id_cuenta_bancaria         = $request->id_cuenta_bancaria;
             $nuevaVenta->save();
 
 
@@ -133,14 +135,14 @@ class VentaController extends Controller
 
             $count = 0;
             $subtotalRefacciones = 0;
-            $detalleCreado= [];
+            $detalleCreado = [];
             foreach ($datosRefacciones as $dataRefaccion) {
 
                 $refaccion = Refaccion::findOrFail($dataRefaccion['id_refaccion']);
 
                 $utilidad = 1;
                 $porcentajeUtilidad = null;
-                if($dataRefaccion['id_porcentaje_utilidad'] !== null){
+                if ($dataRefaccion['id_porcentaje_utilidad'] !== null) {
                     $porcentajeUtilidad = PorcentajeUtilidad::findOrFail($dataRefaccion['id_porcentaje_utilidad']);
                     $utilidad += $porcentajeUtilidad->porcentaje_utilidad / 100;
                 }
@@ -148,7 +150,7 @@ class VentaController extends Controller
                 $nuevaVentaRefaccion = new VentaRefaccion();
                 $nuevaVentaRefaccion->n_cantidad                =   $dataRefaccion['n_cantidad'];
                 $nuevaVentaRefaccion->n_costo_unitario          =   $refaccion->n_precio_venta;
-                $nuevaVentaRefaccion->n_porcentaje_utilidad     =   $porcentajeUtilidad->n_porcentaje_utilidad?? null;
+                $nuevaVentaRefaccion->n_porcentaje_utilidad     =   $porcentajeUtilidad->n_porcentaje_utilidad ?? null;
                 $nuevaVentaRefaccion->n_total                   =   $dataRefaccion['n_cantidad'] * $refaccion->n_precio_venta * $utilidad;
                 $nuevaVentaRefaccion->n_stock_previo            =   $refaccion->n_stock_actual;
                 $nuevaVentaRefaccion->n_stock_posterior         =   $refaccion->n_stock_actual - $dataRefaccion['n_cantidad'];
@@ -169,7 +171,7 @@ class VentaController extends Controller
 
 
                 $count++;
-                $subtotalRefacciones+=$nuevaVentaRefaccion['n_total'];
+                $subtotalRefacciones += $nuevaVentaRefaccion['n_total'];
             }
 
 
@@ -181,7 +183,7 @@ class VentaController extends Controller
             $nuevaVenta->n_cantidad_refacciones      =   $count;
             $nuevaVenta->save();
 
-            if($request->id_metodo_pago == 1){
+            if ($request->id_metodo_pago == 1) {
                 $nuevoCredito = new Credito();
                 $nuevoCredito->id_venta = $nuevaVenta->id_venta;
                 $nuevoCredito->n_total_a_pagar = $nuevaVenta->n_total;
@@ -190,7 +192,7 @@ class VentaController extends Controller
                 $nuevoCredito->id_usuario_crea = $request->id_usuario_crea;
                 $nuevoCredito->save();
 
-                if($request->id_cliente !== 1){
+                if ($request->id_cliente !== 1) {
                     DB::table('tw_clientes')
                         ->where('id_cliente', $request->id_cliente)
                         ->increment('n_saldo_actual', $nuevaVenta->n_total);
@@ -215,7 +217,6 @@ class VentaController extends Controller
 
                 // se dispara la ejecución del evento
                 event(new \App\Events\VerificarStockBajo($idsVendidos, $request->id_usuario_crea));
-
             } catch (\Exception $e) {
                 \Log::error("Error al generar requisición automática: " . $e->getMessage());
             }
@@ -258,12 +259,12 @@ class VentaController extends Controller
 
 
 
-//            return response()->json([
-//                'status'  => 'success',
-//                'code'    => 201,
-//                'message' => 'Refacción creada correctamente.',
-//                'data'    => $detalleCreado,
-//            ]);
+            //            return response()->json([
+            //                'status'  => 'success',
+            //                'code'    => 201,
+            //                'message' => 'Refacción creada correctamente.',
+            //                'data'    => $detalleCreado,
+            //            ]);
         } catch (\Exception $e) {
             \DB::rollBack();
 
@@ -273,6 +274,66 @@ class VentaController extends Controller
                 'message' => 'Error al crear la refacción.',
                 'error'   => $e->getMessage(),
             ], 500);
+        }
+    }
+
+
+
+
+
+
+
+    public function getVentasCorte($fechaHora = null)
+    {
+        try {
+            $fechaHora = $fechaHora ? date('Y-m-d', strtotime($fechaHora)) : date('Y-m-d');
+            $inicioDia = $fechaHora . ' 00:00:00';
+            $finDia = $fechaHora . ' 23:59:59';
+
+            // Ventas esenciales del día
+            $ventas = DB::table('tw_ventas AS T1')
+                ->join('tw_clientes AS T2', 'T1.id_cliente', '=', 'T2.id_cliente')
+                ->join('tc_metodos_pagos AS T3', 'T1.id_metodo_pago', '=', 'T3.id_metodo_pago')
+                ->select(
+                    'T1.id_venta',
+                    'T1.n_total',
+                    'T3.s_metodo_pago AS metodo_pago',
+                    'T2.s_nombre_cliente AS cliente',
+                    'T2.s_numero_telefono AS telefono',
+                    'T2.s_correo AS correo',
+                    'T1.created_at'
+                )
+                ->where('T1.id_estatus_venta', 1)
+                ->where('T1.b_activo', 1)
+                ->whereBetween('T1.created_at', [$inicioDia, $finDia])
+                ->orderBy('T1.created_at')
+                ->get();
+
+            if ($ventas->isEmpty()) {
+                return [
+                    'status' => 'error',
+                    'code' => 400,
+                    'message' => 'No hay ventas para el corte'
+                ];
+            }
+
+            // Suma total de n_total
+            $totalDia = $ventas->sum('n_total');
+
+            return [
+                'status' => 'success',
+                'code' => 200,
+                'message' => 'Ventas obtenidas correctamente',
+                'total_dia' => $totalDia,
+                'data' => $ventas
+            ];
+        } catch (\Exception $e) {
+            return [
+                'status' => 'error',
+                'code' => 500,
+                'message' => 'Error al obtener las ventas del corte',
+                'error' => $e->getMessage()
+            ];
         }
     }
 }
