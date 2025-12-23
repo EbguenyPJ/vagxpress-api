@@ -80,6 +80,23 @@ Route::get('ventas-corte', 'App\Http\Controllers\VentaController@getVentasCorte'
 //          |---------------------      Requisiciones     ---------------------|
 Route::get('mostrar-requisiciones', 'App\Http\Controllers\RequisicionController@mostrarRequisiciones');
 Route::get('mostrar-requisicion/{id_requisicion}', 'App\Http\Controllers\RequisicionController@mostrarRequisicionByID');
+Route::put('actualizar-requisicion/{id_requisicion}', 'App\Http\Controllers\RequisicionController@actualizarRequisicion');
+
+
+
+Route::get('mostrar-requisicion-por-proveedor/{id_requisicion}', 'App\Http\Controllers\RequisicionRefaccionController@previsualizarPorProveedor');
+
+
+
+
+
+//          |---------------------      Ordenes Compras     ---------------------|
+Route::get('mostrar-ordenes-compras', 'App\Http\Controllers\OrdenCompraController@mostrarOrdenesCompras');
+Route::get('mostrar-orden-compra/{id_orden_compra}', 'App\Http\Controllers\OrdenCompraController@mostrarOrdenCompra');
+Route::post('crear-ordenes-compras', 'App\Http\Controllers\OrdenCompraController@generarOrdenesCompra');
+
+
+
 
 
 

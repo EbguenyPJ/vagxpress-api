@@ -20,6 +20,7 @@ return new class extends Migration
             $table->decimal('n_costo_unitario', 10, 2)->nullable()->default(0);
             $table->unsignedInteger('id_motivo_pedido')->nullable();
             $table->unsignedInteger('id_prioridad')->nullable();
+            $table->unsignedInteger('id_estatus_requisicion')->nullable();
             $table->timestamps();
             $table->unsignedTinyInteger('b_activo')->nullable()->default(1);
         });
