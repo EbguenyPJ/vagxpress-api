@@ -71,6 +71,7 @@ Route::post('crear-refacciones-masivo', 'App\Http\Controllers\RefaccionControlle
 //          |---------------------      Ventas     ---------------------|
 Route::get('mostrar-ventas', 'App\Http\Controllers\VentaController@getVentas');
 Route::post('crear-venta', 'App\Http\Controllers\VentaController@crearVenta');
+Route::get('ventas-corte', 'App\Http\Controllers\VentaController@getVentasCorte');
 
 
 
@@ -146,6 +147,7 @@ Route::get('mostrar-corte-id/{id_corte}','App\Http\Controllers\CorteController@s
 Route::post('crear-corte','App\Http\Controllers\CorteController@store');
 Route::post('cerrar-corte/{id_corte}','App\Http\Controllers\CorteController@cerrar');
 Route::post('crear-corte-evidencia','App\Http\Controllers\CorteController@storeEvidencia');
+Route::get('corte-caja-desglosado', 'App\Http\Controllers\CorteController@getCorteCajaDesglosado');
 
 
 

@@ -87,7 +87,6 @@ class CorteController extends Controller
                 'status' => 'ok',
                 'id_corte' => $idCorte
             ]);
-
         } catch (\Throwable $e) {
             DB::rollBack();
             throw $e;
@@ -164,7 +163,6 @@ class CorteController extends Controller
             DB::commit();
 
             return response()->json(['status' => 'ok']);
-
         } catch (\Throwable $e) {
             DB::rollBack();
             throw $e;
@@ -186,4 +184,84 @@ class CorteController extends Controller
 
         return response()->json(['status' => 'ok']);
     }
+
+
+
+
+
+   public function getCorteCajaDesglosado($fechaHora = null)
+{
+    try {
+        $fechaHora = $fechaHora ? date('Y-m-d', strtotime($fechaHora)) : date('Y-m-d');
+        $inicioDia = $fechaHora . ' 00:00:00';
+        $finDia = $fechaHora . ' 23:59:59';
+
+        // 1️⃣ Resumen general por método de pago
+        $resumen = DB::table('tw_ventas AS T1')
+            ->join('tc_metodos_pagos AS T3', 'T1.id_metodo_pago', '=', 'T3.id_metodo_pago')
+            ->select(
+                'T1.id_metodo_pago',
+                'T3.s_metodo_pago AS s_nombre_metodo',
+                DB::raw('GROUP_CONCAT(T1.id_venta) AS id_ventas'),
+                DB::raw('COUNT(T1.id_venta) AS total_ventas'),
+                DB::raw('SUM(T1.n_total) AS total_dinero')
+            )
+            ->where('T1.id_estatus_venta', 1)
+            ->whereBetween('T1.created_at', [$inicioDia, $finDia])
+            ->groupBy('T1.id_metodo_pago', 'T3.s_metodo_pago')
+            ->orderBy('T1.id_metodo_pago')
+            ->get();
+
+        // 2️⃣ Desglose solo para métodos 3,4,5 usando cuentas bancarias
+        $bancos = DB::table('tw_ventas AS T1')
+            ->join('tc_cuentas_bancarias AS T2', 'T1.id_cuenta_bancaria', '=', 'T2.id_cuenta_bancaria')
+            ->join('tc_metodos_pagos AS T3', 'T1.id_metodo_pago', '=', 'T3.id_metodo_pago')
+            ->select(
+                'T1.id_metodo_pago',
+                'T3.s_metodo_pago AS s_nombre_metodo',
+                'T2.s_nombre_cuenta AS cuenta',
+                DB::raw('GROUP_CONCAT(T1.id_venta) AS id_ventas'),
+                DB::raw('COUNT(T1.id_venta) AS total_ventas'),
+                DB::raw('SUM(T1.n_total) AS total_dinero')
+            )
+            ->whereIn('T1.id_metodo_pago', [3, 4, 5])
+            ->where('T1.id_estatus_venta', 1)
+            ->whereBetween('T1.created_at', [$inicioDia, $finDia])
+            ->groupBy('T1.id_metodo_pago', 'T3.s_metodo_pago', 'T2.id_cuenta_bancaria', 'T2.s_nombre_cuenta')
+            ->orderBy('T1.id_metodo_pago')
+            ->orderBy('T2.s_nombre_cuenta')
+            ->get();
+
+        // 3️⃣ Total general de todas las ventas
+        $totalGeneral = DB::table('tw_ventas AS T1')
+            ->where('T1.id_estatus_venta', 1)
+            ->whereBetween('T1.created_at', [$inicioDia, $finDia])
+            ->sum('T1.n_total');
+
+        if ($resumen->isEmpty()) {
+            return [
+                'status' => 'error',
+                'code' => 400,
+                'message' => 'No hay movimientos para el corte'
+            ];
+        }
+
+        return [
+            'status' => 'success',
+            'code' => 200,
+            'message' => 'Corte de caja obtenido correctamente',
+            'total_general' => $totalGeneral,
+            'resumen' => $resumen,
+            'desglose_bancos' => $bancos
+        ];
+    } catch (\Exception $e) {
+        return [
+            'status' => 'error',
+            'code' => 500,
+            'message' => 'Error al obtener el corte de caja',
+            'error' => $e->getMessage()
+        ];
+    }
+}
+
 }
