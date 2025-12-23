@@ -144,10 +144,14 @@ Route::get('embarques-refacciones-insertadas-nuevas/{id_pre_registro_refaccion}'
 
 Route::get('mostrar-cortes', 'App\Http\Controllers\CorteController@index');
 Route::get('mostrar-corte-id/{id_corte}','App\Http\Controllers\CorteController@show');
-Route::post('crear-corte','App\Http\Controllers\CorteController@store');
+Route::post('crear-corte','App\Http\Controllers\CorteController@crearCorte');
+Route::post('subir-evidencias-corte','App\Http\Controllers\CorteController@subirEvidenciasCorte');
 Route::post('cerrar-corte/{id_corte}','App\Http\Controllers\CorteController@cerrar');
 Route::post('crear-corte-evidencia','App\Http\Controllers\CorteController@storeEvidencia');
 Route::get('corte-caja-desglosado', 'App\Http\Controllers\CorteController@getCorteCajaDesglosado');
+
+
+
 
 
 
