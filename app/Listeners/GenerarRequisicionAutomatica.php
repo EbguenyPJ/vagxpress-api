@@ -58,7 +58,8 @@ class GenerarRequisicionAutomatica
             RequisicionRefaccion::updateOrCreate(
                 [
                     'id_requisicion' => $requisicion->id_requisicion,
-                    'id_refaccion' => $refaccion->id_refaccion
+                    'id_refaccion' => $refaccion->id_refaccion,
+                    'id_estatus_requisicion' => 1,
                 ],
                 [
                     'n_cantidad_sugerida' => $cantidadSugerida,
