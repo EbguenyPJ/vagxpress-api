@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tw_puntos_prueba_ruta', function (Blueprint $table) {
+        Schema::create('tw_puntos_ruta', function (Blueprint $table) {
             $table->id('id_punto_prueba_ruta');
             $table->Integer('id_orden')->nullable();
             $table->Integer('id_tipo_ruta')->nullable();

@@ -161,4 +161,7 @@ Route::get('corte-caja-desglosado', 'App\Http\Controllers\CorteController@getCor
 //          |---------------------      VagXpressMovil-Repartidores     ---------------------|
 Route::get('ordenes-asignadas/{id_repartidor}','App\Http\Controllers\Movil\RepartidorController@getOrdenesAsignadas');
 Route::get('detalle-orden/{id_orden}','App\Http\Controllers\Movil\RepartidorController@getDetalleOrden');
-Route::post('subir-evidencias-salida-reparto','App\Http\Controllers\Movil\RepartidorController@subirEvidenciasSalidaReparto');
+Route::post('crear-reparto','App\Http\Controllers\Movil\RepartidorController@crearReparto');
+Route::get('ordenes-pendientes','App\Http\Controllers\Movil\AsignacionController@getAllOrdenesPendientes');
+Route::get('repartidores','App\Http\Controllers\Movil\AsignacionController@getAllRepartidores');
+Route::post('asignar-orden-repartidor','App\Http\Controllers\Movil\AsignacionController@asignarOrdenRepartidor');
