@@ -364,4 +364,160 @@ class RepartidorController extends Controller
         }
         
     }
+
+
+    public function getAllRepartos(Request $request){
+        try{
+            $repartos = DB::table('tw_ordenes as T1')
+                ->leftjoin('tw_destinos as T2', 'T2.id_destino', '=', 'T1.id_destino')
+                ->leftjoin('tc_estatus_orden as T3', 'T3.id_estatus_orden', '=', 'T1.id_estatus_orden')
+                ->select(
+                    'T1.id_orden',
+                    'T2.s_nombre_destino',
+                    'T2.s_direccion',
+                    'T3.s_estatus_orden',
+                )
+                ->where('T1.b_activo', 1)
+                ->get();
+
+
+            // Respuesta de éxito
+            return response()->json([
+                'status' => 'success',
+                'code' => 200,
+                'data' => $repartos,
+                'message' => 'Repartos obtenidos'
+            ], 200);
+
+        }catch (Exception $e) {
+            // Respuesta de error
+            return response()->json([
+                'status' => 'error',
+                'code' => 500,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+
+    public function getDetalleReparto($id_orden){
+        try{
+            $orden = DB::table('tw_ordenes as T1')
+                ->leftjoin('tw_destinos as T2', 'T2.id_destino', '=', 'T1.id_destino')
+                ->leftjoin('tc_estatus_orden as T3', 'T3.id_estatus_orden', '=', 'T1.id_estatus_orden')
+                ->leftjoin('users as T4', 'T4.id', 'T1.id_repartidor')
+                ->select(
+                    'T1.id_orden',
+                    'T1.id_destino',
+                    'T2.s_nombre_destino',
+                    'T2.s_direccion',
+                    'T2.s_referencia_destino',
+                    'T1.s_nota_refaccionista',
+                    'T1.id_repartidor',
+                    'T4.s_nombre_completo',
+                    'T1.d_fecha_asignacion',
+                    'T1.id_estatus_orden',
+                    'T3.s_estatus_orden',
+                    'T1.d_fecha_entrega',
+                    'T1.s_nombre_recibe',
+                    'T1.s_firma',
+                    'T1.d_inicio_reparto',
+                    'T1.d_fin_reparto',
+                    'T1.d_inicio_regreso',
+                    'T1.d_fin_regreso'
+                )
+                ->where('T1.b_activo', 1)
+                ->where('T1.id_orden', $id_orden)
+                ->get();
+
+
+            $productos = DB::table('tr_ordenes_productos as T1')
+                ->select(
+                    'T1.id_orden_producto',
+                    'T1.id_orden',
+                    'T1.s_producto',
+                    'T1.n_cantidad',
+                    'T1.s_comentario'
+                )
+                ->where('T1.b_activo', 1)
+                ->get()
+                ->groupBy('id_orden');
+
+            $orden->transform(function ($srv) use ($productos) {
+                $srv->productos = $productos[$srv->id_orden] ?? [];
+                return $srv;
+            });
+
+
+
+            $evidenciasSalidaReparto = DB::table('tw_evidencias_orden as T1')
+                ->select(
+                    'T1.s_evidencia_orden'
+                )
+                ->where('T1.id_orden', $id_orden)
+                ->where('T1.b_activo', 1)
+                ->where('T1.id_tipo_evidencia', 4)
+                ->get();
+
+
+            $evidenciasFinReparto = DB::table('tw_evidencias_orden as T1')
+                ->select(
+                    'T1.s_evidencia_orden'
+                )
+                ->where('T1.id_orden', $id_orden)
+                ->where('T1.b_activo', 1)
+                ->where('T1.id_tipo_evidencia', 5)
+                ->get();
+
+
+            $rutaSalida = DB::table('tw_puntos_ruta as T1')
+                ->select(
+                    'T1.n_latitud',
+                    'T1.n_longitud',
+                    'T1.timestamp'
+                )
+                ->where('T1.b_activo', 1)
+                ->where('T1.id_orden', $id_orden)
+                ->where('T1.id_tipo_ruta', 1)
+                ->get();
+
+
+            $rutaRegreso = DB::table('tw_puntos_ruta as T1')
+                ->select(
+                    'T1.n_latitud',
+                    'T1.n_longitud',
+                    'T1.timestamp'
+                )
+                ->where('T1.b_activo', 1)
+                ->where('T1.id_orden', $id_orden)
+                ->where('T1.id_tipo_ruta', 2)
+                ->get();
+
+
+            $result = [
+                'orden' => $orden,
+                'evidencias_salida_reparto' => $evidenciasSalidaReparto,
+                'evidencias_fin_reparto' => $evidenciasFinReparto,
+                'ruta_salida' => $rutaSalida,
+                'ruta_regreso' => $rutaRegreso
+            ];
+
+
+            // Respuesta de éxito
+            return response()->json([
+                'status' => 'success',
+                'code' => 200,
+                'data' => $result,
+                'message' => 'Detalle de reparto'
+            ], 200);
+
+        }catch (Exception $e) {
+            // Respuesta de error
+            return response()->json([
+                'status' => 'error',
+                'code' => 500,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }
