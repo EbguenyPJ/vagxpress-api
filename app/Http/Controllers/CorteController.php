@@ -21,7 +21,7 @@ class CorteController extends Controller
                 'T1.id_corte',
                 'T1.id_tipo_corte',
                 'T1.id_usuario_crea',
-                'T2.name as nombre_usuario', 
+                'T2.s_nombre_completo',
                 'T1.d_fecha_corte',
                 'T1.n_monto_efectivo',
                 'T1.n_monto_transferencia',
@@ -244,11 +244,29 @@ class CorteController extends Controller
     /**
      * Detalle de un corte
      */
-    public function show($idCorte)
+    public function mostrarCortePorId($idCorte)
     {
-        $corte = DB::table('tw_cortes')
-            ->where('id_corte', $idCorte)
-            ->where('b_activo', 1)
+        $corte = DB::table('tw_cortes as T1')
+            ->join('users as T2', 'T1.id_usuario_crea', '=', 'T2.id')
+            ->select(
+                'T1.id_corte',
+                'T1.id_tipo_corte',
+                'T1.id_usuario_crea',
+                'T2.s_nombre_completo',
+                'T1.d_fecha_corte',
+                'T1.n_monto_efectivo',
+                'T1.n_monto_transferencia',
+                'T1.n_monto_credito',
+                'T1.n_monto_tarjeta_debito',
+                'T1.n_monto_tarjeta_credito',
+                'T1.n_monto_total',
+                'T1.s_descripcion_corte',
+                'T1.s_comentario',
+                'T1.created_at',
+                'T1.updated_at',
+                'T1.b_activo'
+            )
+            ->where('T1.id_corte', $idCorte)
             ->first();
 
         if (!$corte) {
@@ -264,7 +282,7 @@ class CorteController extends Controller
                 'e.id_metodo_pago',
                 't.s_tipo_evidencia',
                 'e.s_nombre_archivo',
-                'e.s_ruta_archivo'
+                'e.s_descripcion'
             )
             ->get();
 
@@ -273,6 +291,7 @@ class CorteController extends Controller
             'evidencias' => $evidencias
         ]);
     }
+
 
     /**
      * Subir evidencia
