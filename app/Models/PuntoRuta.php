@@ -10,6 +10,7 @@ class PuntoRuta extends Model
     use HasFactory;
     protected $table = 'tw_puntos_ruta';
     protected $primaryKey = 'id_punto_ruta';
+    public $timestamps = false;
     protected $fillable = [
         'id_orden',
         'id_tipo_ruta',

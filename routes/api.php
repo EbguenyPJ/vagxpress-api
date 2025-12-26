@@ -165,3 +165,5 @@ Route::post('crear-reparto','App\Http\Controllers\Movil\RepartidorController@cre
 Route::get('ordenes-pendientes','App\Http\Controllers\Movil\AsignacionController@getAllOrdenesPendientes');
 Route::get('repartidores','App\Http\Controllers\Movil\AsignacionController@getAllRepartidores');
 Route::post('asignar-orden-repartidor','App\Http\Controllers\Movil\AsignacionController@asignarOrdenRepartidor');
+Route::get('repartos','App\Http\Controllers\Movil\RepartidorController@getAllRepartos');
+Route::get('detalle-reparto/{id_orden}','App\Http\Controllers\Movil\RepartidorController@getDetalleReparto');
