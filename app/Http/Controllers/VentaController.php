@@ -128,6 +128,7 @@ class VentaController extends Controller
             $nuevaVenta->id_usuario_crea             =   $request->id_usuario_crea;
             $nuevaVenta->id_metodo_pago             =   $request->id_metodo_pago;
             $nuevaVenta->id_cuenta_bancaria         = $request->id_cuenta_bancaria;
+            $nuevaVenta->b_corte                    = 0;
             $nuevaVenta->save();
 
 
@@ -232,20 +233,16 @@ class VentaController extends Controller
             $pdf = \PDF::loadView('tickets.venta_pos', [
                 'venta' => $nuevaVenta,
                 'detalles' => $detalleCreado,
-                'cliente' => $clienteModel, // <--- Pasamos el objeto
+                'cliente' => $clienteModel,
                 'credito' => isset($nuevoCredito) ? $nuevoCredito : null
             ]);
 
-            // Para tickets largos
-            // [0, 0, ancho_puntos, largo_puntos]
-            // 226 puntos son aprox 80mm.
-            // El largo (1000) puede ser variable si se usa papel continuo.
-            $pdf->setPaper([0, 0, 226, 1000], 'portrait');
+            // [0, 0, ancho, largo]
+            // 205 puntos (aprox 72mm)
+            $pdf->setPaper([0, 0, 205, 1000], 'portrait');
 
-            // Convertir a Base64
             $ticketBase64 = base64_encode($pdf->output());
 
-            // JSON incluye el ticket
             return response()->json([
                 'status'  => 'success',
                 'code'    => 201,
@@ -286,7 +283,9 @@ class VentaController extends Controller
     public function getVentasCorte($fechaHora = null)
     {
         try {
+            $fechaHora = request('fechaHora'); // viene como yyyy-mm-dd
             $fechaHora = $fechaHora ? date('Y-m-d', strtotime($fechaHora)) : date('Y-m-d');
+
             $inicioDia = $fechaHora . ' 00:00:00';
             $finDia = $fechaHora . ' 23:59:59';
 

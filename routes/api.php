@@ -80,6 +80,23 @@ Route::get('ventas-corte', 'App\Http\Controllers\VentaController@getVentasCorte'
 //          |---------------------      Requisiciones     ---------------------|
 Route::get('mostrar-requisiciones', 'App\Http\Controllers\RequisicionController@mostrarRequisiciones');
 Route::get('mostrar-requisicion/{id_requisicion}', 'App\Http\Controllers\RequisicionController@mostrarRequisicionByID');
+Route::put('actualizar-requisicion/{id_requisicion}', 'App\Http\Controllers\RequisicionController@actualizarRequisicion');
+
+
+
+Route::get('mostrar-requisicion-por-proveedor/{id_requisicion}', 'App\Http\Controllers\RequisicionRefaccionController@previsualizarPorProveedor');
+
+
+
+
+
+//          |---------------------      Ordenes Compras     ---------------------|
+Route::get('mostrar-ordenes-compras', 'App\Http\Controllers\OrdenCompraController@mostrarOrdenesCompras');
+Route::get('mostrar-orden-compra/{id_orden_compra}', 'App\Http\Controllers\OrdenCompraController@mostrarOrdenCompra');
+Route::post('crear-ordenes-compras', 'App\Http\Controllers\OrdenCompraController@generarOrdenesCompra');
+
+
+
 
 
 
@@ -144,10 +161,14 @@ Route::get('embarques-refacciones-insertadas-nuevas/{id_pre_registro_refaccion}'
 
 Route::get('mostrar-cortes', 'App\Http\Controllers\CorteController@index');
 Route::get('mostrar-corte-id/{id_corte}','App\Http\Controllers\CorteController@show');
-Route::post('crear-corte','App\Http\Controllers\CorteController@store');
+Route::post('crear-corte','App\Http\Controllers\CorteController@crearCorte');
+Route::post('subir-evidencias-corte','App\Http\Controllers\CorteController@subirEvidenciasCorte');
 Route::post('cerrar-corte/{id_corte}','App\Http\Controllers\CorteController@cerrar');
 Route::post('crear-corte-evidencia','App\Http\Controllers\CorteController@storeEvidencia');
 Route::get('corte-caja-desglosado', 'App\Http\Controllers\CorteController@getCorteCajaDesglosado');
+
+
+
 
 
 

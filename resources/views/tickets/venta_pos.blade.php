@@ -3,80 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <title>Ticket de Venta #{{ $venta->id_venta }}</title>
-<style>
-/* Configuración general para ticket térmico */
-@page {
-    margin: 0;
-    padding: 0;
-}
-body {
-    font-family: 'Courier New', Courier, monospace; /* Fuente tipo ticket */
-            font-size: 10px; /* Tamaño pequeño para que quepa todo */
-            margin: 5px;
+    <style>
+
+        @page {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 10px;
+
+
+            margin: 0;
+            padding: 5px 2px;
+
+            line-height: 1.6;
+
             color: #000;
         }
 
-        /* Utilidades */
-.text-center { text-align: center; }
+
+        .text-center { text-align: center; }
         .text-right { text-align: right; }
         .text-left { text-align: left; }
         .bold { font-weight: bold; }
-        .uppercase { text-transform: uppercase; }
 
-        /* Separadores */
-.linea {
-    border-bottom: 1px dashed #000;
-            margin: 5px 0;
+
+        .linea {
+            border-bottom: 1px dashed #000;
+            margin: 8px 0;
+            line-height: 1;
         }
         .linea-doble {
-    border-bottom: 3px double #000;
+            border-bottom: 3px double #000;
             margin: 5px 0;
         }
 
-        /* Tabla de productos */
-table {
-    width: 100%;
-    border-collapse: collapse;
+        table {
+            width: 100%;
+            border-collapse: collapse;
         }
         th {
-    text-align: left;
+            text-align: left;
             border-bottom: 1px solid #000;
             padding-bottom: 2px;
+            font-size: 9px;
         }
         td {
-    padding: 2px 0;
+            padding: 4px 0; /* Padding vertical en celdas + el line-height del body */
             vertical-align: top;
         }
 
-        /* Ajuste de columnas */
-.col-cant { width: 15%; }
-.col-desc { width: 55%; }
-.col-precio { width: 30%; text-align: right; }
+        .col-cant { width: 12%; }
+        .col-desc { width: 58%; }
+        .col-precio { width: 30%; text-align: right; }
 
-        /* Totales */
-.tabla-totales {
-    margin-top: 10px;
-        }
-        .tabla-totales td {
-    padding: 1px 0;
-        }
+        .tabla-totales { margin-top: 10px; }
+        .tabla-totales td { padding: 1px 0; }
 
         .footer {
-    margin-top: 20px;
+            margin-top: 10px;
             font-size: 9px;
             text-align: center;
+        }
+
+        .qr-section {
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        /* Margen final para el corte */
+        .espacio-final {
+            height: 5mm;
+            width: 100%;
         }
     </style>
 </head>
 <body>
 
-    <div class="header text-center">
-{{-- <img src="{{ public_path('img/logo-ticket.png') }}" width="100" alt="Logo"> --}}
-
-<h2 style="margin: 5px 0;">Vag Xpress</h2>
-<div>RFC: AAA010101AAA</div>
-<div>Av. Principal #123, Centro</div>
-<div>Puebla, Pue. Tel: 222-123-4567</div>
+<div class="header text-center">
+    {{-- <img src="{{ public_path('img/logo-ticket.png') }}" width="100" alt="Logo"> --}}
+    <h2 style="margin: 5px 0;">Vag Xpress</h2>
+    <div>RFC: AAA010101AAA</div>
+    <div>Av. Principal #123, Centro</div>
+    <div>Puebla, Pue. Tel: 222-123-4567</div>
 </div>
 
 <div class="linea-doble"></div>
@@ -84,7 +95,8 @@ table {
 <div>
     <strong>Folio:</strong> {{ str_pad($venta->id_venta, 6, '0', STR_PAD_LEFT) }}<br>
     <strong>Fecha:</strong> {{ \Carbon\Carbon::parse($venta->created_at)->format('d/m/Y h:i A') }}<br>
-    <strong>Cajero:</strong> {{ $venta->id_usuario_crea }} <br> <strong>Cliente:</strong> {{ isset($cliente->nombre) ? $cliente->nombre : 'Público General' }}
+    <strong>Cajero:</strong> {{ $venta->id_usuario_crea }} <br>
+    <strong>Cliente:</strong> {{ isset($cliente->nombre) ? $cliente->nombre : 'Público General' }}
 </div>
 
 <div class="linea"></div>
@@ -129,7 +141,12 @@ table {
 
 <div style="margin-top: 10px;">
     <strong>Método de Pago:</strong>
-    @if($venta->id_metodo_pago == 1) Crédito @elseif($venta->id_metodo_pago == 2) Efectivo @elseif($venta->id_metodo_pago == 3) Tarjeta Credito @elseif($venta->id_metodo_pago == 4) Tarjeta Debito @elseif($venta->id_metodo_pago == 5) Transferencia @else Otro @endif
+    @if($venta->id_metodo_pago == 1) Crédito
+    @elseif($venta->id_metodo_pago == 2) Efectivo
+    @elseif($venta->id_metodo_pago == 3) Tarjeta Credito
+    @elseif($venta->id_metodo_pago == 4) Tarjeta Debito
+    @elseif($venta->id_metodo_pago == 5) Transferencia
+    @else Otro @endif
 </div>
 
 @if(isset($credito))
@@ -144,11 +161,19 @@ table {
     </div>
 @endif
 
+{{-- QR //Eventualmente se cambiara por uno dinamico --}}
+<div class="qr-section">
+    <img src="{{ public_path('recursos/SaveCarWeb.png') }}" width="80" alt="QR Code">
+</div>
+
 <div class="footer">
     <p>¡Gracias por su compra!</p>
     <p>Este ticket no es comprobante fiscal.</p>
     <p>Software POS v1.0</p>
 </div>
+
+{{-- ESPACIO FINAL DE SEGURIDAD PARA EL CORTE --}}
+<div class="espacio-final">&nbsp;</div>
 
 </body>
 </html>

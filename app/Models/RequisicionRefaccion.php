@@ -21,6 +21,7 @@ class RequisicionRefaccion extends Model
         'n_costo_unitario',
         'id_motivo_pedido',
         'id_prioridad',
+        'id_estatus_requisicion',
         'b_activo'
     ];
 }
