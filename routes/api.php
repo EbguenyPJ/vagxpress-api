@@ -93,6 +93,8 @@ Route::get('mostrar-requisicion-por-proveedor/{id_requisicion}', 'App\Http\Contr
 //          |---------------------      Ordenes Compras     ---------------------|
 Route::get('mostrar-ordenes-compras', 'App\Http\Controllers\OrdenCompraController@mostrarOrdenesCompras');
 Route::get('mostrar-orden-compra/{id_orden_compra}', 'App\Http\Controllers\OrdenCompraController@mostrarOrdenCompra');
+Route::get('descargar-orden-compra-pdf/{id_orden_compra}', 'App\Http\Controllers\OrdenCompraController@generarOrdenCompraPDF');
+Route::put('gestionar-orden-compra/{id_orden_compra}', 'App\Http\Controllers\OrdenCompraController@gestionarOrdenCompra');
 Route::post('crear-ordenes-compras', 'App\Http\Controllers\OrdenCompraController@generarOrdenesCompra');
 
 
