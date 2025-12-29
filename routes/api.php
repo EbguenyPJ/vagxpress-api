@@ -72,7 +72,7 @@ Route::post('crear-refacciones-masivo', 'App\Http\Controllers\RefaccionControlle
 Route::get('mostrar-ventas', 'App\Http\Controllers\VentaController@getVentas');
 Route::post('crear-venta', 'App\Http\Controllers\VentaController@crearVenta');
 Route::get('ventas-corte', 'App\Http\Controllers\VentaController@getVentasCorte');
-
+Route::get('venta-detalle/{id_venta}', 'App\Http\Controllers\VentaController@getVentaById');
 
 
 

@@ -366,7 +366,7 @@ class CorteController extends Controller
             $inicioDia = $fechaSolo . ' 00:00:00';
             $finDia = $fechaSolo . ' 23:59:59';
 
-            // 1️⃣ Resumen general por método de pago
+            // Resumen general por método de pago
             $resumen = DB::table('tw_ventas AS T1')
                 ->join('tc_metodos_pagos AS T3', 'T1.id_metodo_pago', '=', 'T3.id_metodo_pago')
                 ->select(
@@ -412,7 +412,8 @@ class CorteController extends Controller
                 ->get();
 
             //  Total general de todas las ventas (suma de resumen)
-            $totalGeneral = $resumen->sum('total_dinero');
+            //$totalGeneral = $resumen->sum('total_dinero');
+            $totalGeneral = round($resumen->sum('total_dinero'), 2);
 
             return [
                 'status' => 'success',
