@@ -68,9 +68,9 @@ class CategoriaRefaccionController extends Controller
         try {
             $data = DB::table('tc_categorias_refacciones AS T1')
                 ->select(
-                    'T1.id_categoria_refaccion AS id',
-                    'T1.s_categoria_refaccion AS nombre',
-                    'T1.s_img_categoria_refaccion AS imagen',
+                    'T1.id_categoria_refaccion',
+                    'T1.s_categoria_refaccion',
+                    'T1.s_img_categoria_refaccion',
                 )
                 ->where('b_activo', 1)
                 ->get();
