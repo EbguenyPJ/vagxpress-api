@@ -174,6 +174,13 @@ Route::get('corte-caja-desglosado', 'App\Http\Controllers\CorteController@getCor
 
 
 
+// ======================= Gastos =======================
+Route::get('gastos/obtener-gastos/{id_sucursal}', 'App\Http\Controllers\Movil\GastoController@obtenerGastos');
+Route::get('gastos/categorias', 'App\Http\Controllers\Movil\GastoController@getCategoriasGastos');
+Route::post('gastos/crear-tipo-gasto', 'App\Http\Controllers\Movil\GastoController@crearTipoGasto');
+Route::post('gastos/crear-gasto', 'App\Http\Controllers\Movil\GastoController@crearGasto');
+
+
 
 
 
