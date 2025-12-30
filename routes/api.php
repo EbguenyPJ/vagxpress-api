@@ -68,6 +68,15 @@ Route::post('crear-refacciones-masivo', 'App\Http\Controllers\RefaccionControlle
 
 
 
+
+
+//          |---------------------      Cotizaciones     ---------------------|
+Route::post('crear-cotizacion', 'App\Http\Controllers\CotizacionController@crearCotizacion');
+
+
+
+
+
 //          |---------------------      Ventas     ---------------------|
 Route::get('mostrar-ventas', 'App\Http\Controllers\VentaController@getVentas');
 Route::post('crear-venta', 'App\Http\Controllers\VentaController@crearVenta');
