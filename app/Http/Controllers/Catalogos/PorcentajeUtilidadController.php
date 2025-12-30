@@ -14,8 +14,9 @@ class PorcentajeUtilidadController extends Controller
                 ->select(
                     'T1.id_porcentaje_utilidad',
                     'T1.n_porcentaje_utilidad',
+                    'T1.id_tipo_configuracion',
                 )
-                ->where('id_tipo_configuracion', 3)
+                ->whereIn('id_tipo_configuracion', [2,3])
                 ->where('b_activo', 1)
                 ->get();
 

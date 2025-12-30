@@ -349,7 +349,7 @@ class RefaccionController extends Controller
                 'b_importado' => 'nullable|boolean',
                 'id_usuario_edita' => 'nullable|integer|exists:users,id',
                 'refacciones_equivalentes' => 'nullable|array',
-                'refacciones_equivalentes.*' => 'integer|exists:tw_refacciones,id_refaccion',
+                'refacciones_equivalentes.*.id_refaccion' => 'integer|exists:tw_refacciones,id_refaccion',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -408,11 +408,31 @@ class RefaccionController extends Controller
                             ->update(['b_activo' => 0, 'id_usuario_edita' => $idUsuario]);
                     }
                 }
+
             }
 
             else {
+
+
+
+                $nuevosEquivalentes = collect(
+                    $request->input('refacciones_equivalentes', [])
+                );
+
+                $idsRefacciones = $nuevosEquivalentes
+                    ->pluck('id_refaccion')
+                    ->filter()       // elimina nulls
+                    ->unique()       // evita duplicados
+                    ->values()
+                    ->toArray();
+
                 $gruposNuevos = DB::table('tr_refacciones_equivalencias')
-                    ->whereIn('id_refaccion', $nuevosEquivalentesIds)->where('b_activo', 1)->distinct()->pluck('id_equivalencia');
+                    ->whereIn('id_refaccion', $idsRefacciones)
+                    ->where('b_activo', 1)
+                    ->distinct()
+                    ->pluck('id_equivalencia');
+
+
 
                 if ($gruposNuevos->count() > 1) {
                     throw new \Exception("Error: Las refacciones seleccionadas pertenecen a grupos de equivalencia distintos.");
@@ -424,7 +444,12 @@ class RefaccionController extends Controller
                     throw new \Exception("Error: No se puede mover una refacción de un grupo a otro en esta operación.");
                 }
 
+
+
                 $idDelGrupoFinal = $idGrupoActual ?: $idGrupoNuevo;
+
+
+
 
                 if (!$idDelGrupoFinal) {
                     $nuevoGrupo = new Equivalencia();
@@ -434,7 +459,18 @@ class RefaccionController extends Controller
                     $idDelGrupoFinal = $nuevoGrupo->id_equivalencia;
                 }
 
-                $todasLasRefaccionesIds = array_unique(array_merge([$id], $nuevosEquivalentesIds));
+
+
+                $todasLasRefaccionesIds = collect([$id])
+                    ->merge($idsRefacciones)
+                    ->unique()
+                    ->values()
+                    ->toArray();
+
+
+
+
+
                 foreach ($todasLasRefaccionesIds as $refId) {
                     DB::table('tr_refacciones_equivalencias')->updateOrInsert(
                         ['id_refaccion' => $refId, 'id_equivalencia' => $idDelGrupoFinal],
