@@ -143,7 +143,7 @@ class GastoController extends Controller
 
 
 
-    public function obtenerGastos($id_sucursal)
+    public function obtenerGastos()
     {
         try {
             $gastos = DB::table('tw_gastos as T1')
@@ -172,8 +172,9 @@ class GastoController extends Controller
 
                     'T5.s_nombre_completo as usuario_crea'
                 )
+                ->orderBy('T1.id_gasto', 'ASC')
                 ->where('T1.b_activo', 1)
-                ->where('T1.id_sucursal', $id_sucursal)
+                
                 ->orderByDesc('T1.d_fecha_gasto')
                 ->get();
 
@@ -196,7 +197,6 @@ class GastoController extends Controller
             ], 500);
         }
     }
-
 
 
     public function crearGasto(Request $request)
@@ -232,8 +232,8 @@ class GastoController extends Controller
                 'd_fecha_creacion'    => now(),
                 'id_usuario_crea'     => $request->id_usuario_crea ?? null,
                 'b_activo'            => 1,
-                's_evidencias'        => null,
-                'id_tipos_evidencias' => null,
+                's_evidencia'         => null,
+                'id_tipo_evidencia'   => null,
                 'b_movil'             => 0 // Indica que no es gasto móvil
             ]);
 
@@ -256,17 +256,24 @@ class GastoController extends Controller
                     $tipo = 'documento';
                 }
 
-                if (!$tipo) {
-                    return response()->json([
-                        'status' => 'error',
-                        'message' => 'El tipo de evidencia no está permitido'
-                    ], 400);
+                // Asignar ID de evidencia manual según tipo
+                switch ($tipo) {
+                    case 'imagen':
+                        $idTipoEvidencia = 1;
+                        break;
+                    case 'video':
+                        $idTipoEvidencia = 2;
+                        break;
+                    case 'audio':
+                        $idTipoEvidencia = 3;
+                        break;
+                    case 'documento':
+                        $idTipoEvidencia = 4;
+                        break;
+                    default:
+                        $idTipoEvidencia = null;
+                        break;
                 }
-
-                // Obtener id del tipo de evidencia desde catálogo
-                $idTipoEvidencia = DB::table('tc_tipos_evidencias_servicio')
-                    ->where('s_tipo_evidencia_servicio', $tipo)
-                    ->value('id_tipo_evidencia_servicio');
 
                 $destino = public_path('evidencias_gastos');
                 if (!file_exists($destino)) {
@@ -284,8 +291,8 @@ class GastoController extends Controller
                 DB::table('tw_gastos')
                     ->where('id_gasto', $idGasto)
                     ->update([
-                        's_evidencias' => $rutaArchivo,
-                        'id_tipos_evidencias' => $idTipoEvidencia
+                        's_evidencia' => $rutaArchivo,
+                        'id_tipo_evidencia' => $idTipoEvidencia
                     ]);
             }
 
