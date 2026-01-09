@@ -206,3 +206,33 @@ Route::get('repartidores','App\Http\Controllers\Movil\AsignacionController@getAl
 Route::post('asignar-orden-repartidor','App\Http\Controllers\Movil\AsignacionController@asignarOrdenRepartidor');
 Route::get('repartos','App\Http\Controllers\Movil\RepartidorController@getAllRepartos');
 Route::get('detalle-reparto/{id_orden}','App\Http\Controllers\Movil\RepartidorController@getDetalleReparto');
+
+
+
+
+
+
+
+//          |---------------------      Dashboard     ---------------------|
+
+
+Route::get('ventas-pagadas-por-dia', 'App\Http\Controllers\DashboardController@ventasPagadasPorDia');
+Route::get('ventas-hoy', 'App\Http\Controllers\DashboardController@ventasHoy');
+Route::get('ordenes-en-reparto-hoy', 'App\Http\Controllers\DashboardController@ordenesEnRepartoHoy');
+Route::get('ordenes-compra-hoy', 'App\Http\Controllers\DashboardController@ordenesCompraHoy');
+Route::get('requisiciones-aprobadas-hoy', 'App\Http\Controllers\DashboardController@requisicionesAprobadasHoy');
+Route::get('top5-clientes-con-mas-ventas', 'App\Http\Controllers\DashboardController@top5ClientesConMasVentas');
+Route::get('top5-refacciones-vendidas', 'App\Http\Controllers\DashboardController@top5RefaccionesVendidas');
+Route::get('total-ventas-hoy', 'App\Http\Controllers\DashboardController@ventasAcumuladasHoy');
+Route::get('ventas-metodos-hoy', 'App\Http\Controllers\DashboardController@ventasPorMetodoPagoHoy');
+Route::get('refaccionista-mas-ventas', 'App\Http\Controllers\DashboardController@top5RefaccionistasPorIngresos');
+Route::get('refacciones-stock-minimo', 'App\Http\Controllers\DashboardController@top5RefaccionesCriticas');
+Route::get('proveedores-mas-activos', 'App\Http\Controllers\DashboardController@topProveedoresRefaccionesActivas');
+
+
+
+
+
+
+
+
