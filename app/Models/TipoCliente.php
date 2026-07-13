@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TipoCliente extends Model
 {
@@ -12,8 +13,24 @@ class TipoCliente extends Model
     protected $table = 'tc_tipos_clientes';
     protected $primaryKey = 'id_tipo_cliente';
 
+    public $timestamps = false;
+
     protected $fillable = [
         's_tipo_cliente',
-        'b_activo'
+        'b_activo',
     ];
+
+    protected $casts = [
+        'b_activo' => 'boolean',
+    ];
+
+    public function scopeActivo($query)
+    {
+        return $query->where('b_activo', 1);
+    }
+
+    public function clientes(): HasMany
+    {
+        return $this->hasMany(Cliente::class, 'id_tipo_cliente', 'id_tipo_cliente');
+    }
 }

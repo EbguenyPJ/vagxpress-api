@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Banco extends Model
 {
@@ -17,6 +18,20 @@ class Banco extends Model
     protected $fillable = [
         's_banco',
         's_img_banco',
-        'b_activo'
+        'b_activo',
     ];
+
+    protected $casts = [
+        'b_activo' => 'boolean',
+    ];
+
+    public function scopeActivo($query)
+    {
+        return $query->where('b_activo', 1);
+    }
+
+    public function cuentasBancarias(): HasMany
+    {
+        return $this->hasMany(CuentaBancaria::class, 'id_banco', 'id_banco');
+    }
 }
